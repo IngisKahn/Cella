@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -32,7 +31,7 @@ namespace Cella.Core.Tests
             sfg = db.FileGroups.Skip(2).First();
             Assert.Equal("Orders", sfg.Name);
             Assert.Single(sfg.DataFiles.Take(1), f => f.Name == "OrderEntry_Orders_F1" && f.FileName == "o:\\OEOrders_F1.ndf");
-            Assert.Single(sfg.DataFiles.Skip((1)).Take(1), f => f.Name == "OrderEntry_Orders_F2" && f.FileName == "p:\\OEOrders_F2.ndf");
+            Assert.Single(sfg.DataFiles.Skip(1).Take(1), f => f.Name == "OrderEntry_Orders_F2" && f.FileName == "p:\\OEOrders_F2.ndf");
             Assert.Equal("OrderEntryDb_log", db.LogFiles.Single().Name);
             Assert.Equal("l:\\OrderEntryDb_log.ldf", db.LogFiles.Single().FileName);
         }
