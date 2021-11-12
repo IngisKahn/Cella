@@ -12,21 +12,13 @@ public class CellaException : Exception
     //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
     //
 
-    public CellaException()
-    {
-    }
+    public CellaException() { }
 
-    public CellaException(string message) : base(message)
-    {
-    }
+    public CellaException(string message) : base(message) { }
 
-    public CellaException(string message, Exception inner) : base(message, inner)
-    {
-    }
+    public CellaException(string message, Exception inner) : base(message, inner) { }
 
     protected CellaException(
         SerializationInfo info,
-        StreamingContext context) : base(info, context)
-    {
-    }
+        StreamingContext context) : base(info, context) { }
 }

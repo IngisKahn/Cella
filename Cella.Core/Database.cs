@@ -4,26 +4,18 @@ namespace Cella.Core;
 
 public class Database
 {
-    public Collection<DatabaseObject> Objects { get; set; }
+    public Collection<DatabaseObject> Objects { get; set; } = new();
 
-    public List<DatabaseFile> LogFiles { get; } = new();
-    public PrimaryFileGroup PrimaryFileGroup { get; set; }
-    public List<FileGroup> FileGroups { get; } = new();
-}
+    public DatabaseFile[] LogFiles { get; }
+    public PrimaryFileGroup PrimaryFileGroup { get; }
+    public FileGroup[] FileGroups { get; }
+    public string Name { get; }
 
-public class FileGroup
-{
-    public List<DatabaseFile> DataFiles { get; } = new();
-
-}
-
-public class PrimaryFileGroup : FileGroup
-{
-    public DatabaseFile PrimaryFile { get; set; }
-
-}
-
-public class DatabaseFile
-{
-
+    public Database(string name, PrimaryFileGroup primaryFileGroup, IEnumerable<FileGroup> fileGroups, IEnumerable<DatabaseFile> logFiles)
+    {
+        this.Name = name;
+        this.PrimaryFileGroup = primaryFileGroup;
+        this.FileGroups = fileGroups.Prepend(primaryFileGroup).ToArray();
+        this.LogFiles = logFiles.ToArray();
+    }
 }
