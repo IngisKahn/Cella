@@ -7,6 +7,9 @@ public class BufferPool
     private readonly HashSet<int> freeBuffers = new();
     private int bufferCount;
 
+    public int WorkingSetPages => this.bufferBlocks.Count * this.initialSize;
+    public int FreePages => this.freeBuffers.Count;
+
     public BufferPool(int initialSize)
     {
         this.initialSize = initialSize;
