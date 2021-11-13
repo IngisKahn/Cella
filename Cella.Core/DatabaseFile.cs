@@ -1,4 +1,6 @@
-﻿namespace Cella.Core;
+﻿using System.Collections.Concurrent;
+
+namespace Cella.Core;
 
 public enum AutoGrowthType
 {

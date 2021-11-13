@@ -2,6 +2,6 @@
 
 public class DatabaseObject
 {
-    public void Store() {}
-    public void Manipulate() {}
+    //public void Store() {}
+    //public void Manipulate() {}
 }
