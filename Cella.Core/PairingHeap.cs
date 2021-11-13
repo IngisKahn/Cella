@@ -49,7 +49,9 @@ public class PairingHeap<T>
     {
         var min = this.MinimumNode ?? throw new InvalidOperationException("No nodes to remove");
         this.Count--;
-        this.MinimumNode = PairingHeap<T>.MergePairs(min);
+        if (min.Child != null)
+            min.Child.Previous = null;
+        this.MinimumNode = PairingHeap<T>.MergePairs(min.Child);
 
         return min;
     }
