@@ -2,7 +2,13 @@
 
 public abstract class Page
 {
+    public FullPageId FullPageId { get; set; }
+    public bool IsDirty { get; set; }
 
+    public async Task FlushAsync()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public abstract class SlotPage : Page
