@@ -5,7 +5,15 @@ namespace Cella.Core;
 
 public sealed class DataCache : IAsyncDisposable
 {
-    public readonly record struct Options(long CorrelatedReferencePeriod, long MaxSecondaryCorrelationPeriod);
+    public readonly record struct Options(
+        long CorrelatedReferencePeriod, 
+        long MaxSecondaryCorrelationPeriod, 
+        int MinimumFreeBuffers, 
+        int GrowBufferAllocationCount,
+        int LazyWriterInterval,
+        int LazyWriterSlotBatchSize,
+        int LazyWriterSleepInterval
+        );
 
     private readonly BufferPool bufferPool;
     private readonly Options options;
@@ -44,19 +52,19 @@ public sealed class DataCache : IAsyncDisposable
     {
         do
         {
-            if (this.freeBuffers.Count < 50)
-                for (var i = 0; i < 100; i++)
+            if (this.freeBuffers.Count < this.options.MinimumFreeBuffers)
+                for (var i = 0; i < this.options.GrowBufferAllocationCount; i++)
                     this.freeBuffers.Enqueue(this.bufferPool.Allocate());
 
             this.nextNode ??= this.allocated.First;
 
             if (this.nextNode == null)
             {
-                await Task.Delay(2000);
+                await Task.Delay(this.options.LazyWriterSleepInterval);
                 continue;
             }
 
-            var toCheck = Math.Min(16, this.allocated.Count);
+            var toCheck = Math.Min(this.options.LazyWriterSlotBatchSize, this.allocated.Count);
             var now = Environment.TickCount64;
             while (toCheck-- > 0)
             {
@@ -89,7 +97,7 @@ public sealed class DataCache : IAsyncDisposable
                 }
             }
 
-            await Task.Delay(1000);
+            await Task.Delay(this.options.LazyWriterInterval);
         } while (!shutdown);
     }
 
@@ -116,7 +124,7 @@ public sealed class DataCache : IAsyncDisposable
         {
             BufferPool.Buffer buffer;
             while (!freeBuffers.TryDequeue(out buffer))
-                await Task.Delay(1000);
+                await Task.Delay(this.options.LazyWriterInterval);
             slot = new(buffer, loader()) { UncorrelatedAccess1 = ticks };
             lock (this.allocated)
                 this.allocated.AddLast(slot);
@@ -132,7 +140,7 @@ public sealed class DataCache : IAsyncDisposable
         return slot.Page;
     }
 
-    public record Slot(BufferPool.Buffer Buffer, Page Page)
+    private record Slot(BufferPool.Buffer Buffer, Page Page)
     {
         public long LastAccess { get; set; }
         public long UncorrelatedAccess1 { get; set; }
