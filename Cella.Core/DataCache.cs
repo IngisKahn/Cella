@@ -7,9 +7,9 @@ namespace Cella.Core;
 public sealed class DataCache : IAsyncDisposable
 {
     public readonly record struct Options(
-        long CorrelatedReferencePeriod, 
-        long MaxSecondaryCorrelationPeriod, 
-        int MinimumFreeBuffers, 
+        long CorrelatedReferencePeriod,
+        long MaxSecondaryCorrelationPeriod,
+        int MinimumFreeBuffers,
         int GrowBufferAllocationCount,
         int LazyWriterInterval,
         int LazyWriterSlotBatchSize,
@@ -22,7 +22,7 @@ public sealed class DataCache : IAsyncDisposable
     private readonly ConcurrentQueue<BufferPool.Buffer> freeBuffers = new();
     private readonly ConcurrentDictionary<FullPageId, Slot> cache = new();
     private readonly LinkedList<Slot> allocated = new();
-    private LinkedListNode<Slot>? nextNode;
+    private LinkedListNode<Slot>? nextWriterNode;
     private readonly Task lazyWriter;
     private bool shutdown;
     private bool generationFlag;
@@ -44,29 +44,61 @@ public sealed class DataCache : IAsyncDisposable
             slot.Buffer.Dispose();
     }
 
+    private void GrowBuffers()
+    {
+        for (var i = 0; i < this.options.GrowBufferAllocationCount; i++)
+            this.freeBuffers.Enqueue(this.bufferPool.Allocate());
+    }
+
     private async Task LazyWriterWorkerAsync()
     {
+        static void SpinLock(Slot slot)
+        {
+            for (; Interlocked.CompareExchange(ref slot.WriteLock, 1, 0) == 1;) { }
+        }
+
         do
         {
+            // check if we are running low
             if (this.freeBuffers.Count < this.options.MinimumFreeBuffers)
-                for (var i = 0; i < this.options.GrowBufferAllocationCount; i++)
-                    this.freeBuffers.Enqueue(this.bufferPool.Allocate());
+                this.GrowBuffers();
 
-            this.nextNode ??= this.allocated.First;
+            // if we didn't have any buffers allocated we need to start again
+            this.nextWriterNode ??= this.allocated.First;
 
-            if (this.nextNode == null)
+            // there are no buffers allocated, so take a nap
+            if (this.nextWriterNode == null)
             {
                 await Task.Delay(this.options.LazyWriterSleepInterval);
                 continue;
             }
 
+            var previousNode = this.nextWriterNode.Previous!;
+            var currentNode = this.nextWriterNode!;
+            var nextNode = this.nextWriterNode.Next!;
+
+            // lock previous
+            if (this.allocated.Count > 1)
+                SpinLock(previousNode!.Value);
+            // lock current
+            SpinLock(currentNode.Value);
+
             var toCheck = Math.Min(this.options.LazyWriterSlotBatchSize, this.allocated.Count);
             var now = Environment.TickCount64;
             while (toCheck-- > 0)
             {
-                var currentNode = this.nextNode!;
-                this.nextNode = currentNode.Next ?? this.allocated.First;
+                previousNode = currentNode;
+                currentNode = nextNode!;
+                
+                this.nextWriterNode = nextNode = currentNode.Next;
+
+                if (nextNode != previousNode)
+                    SpinLock(nextNode!.Value);
+
                 var currentSlot = currentNode.Value;
+
+                for (; Interlocked.CompareExchange(ref currentSlot.WriteLock, 1, 0) == 1;) { }
+
                 if (now - currentSlot.LastAccess <= this.options.CorrelatedReferencePeriod
                     || currentSlot.UncorrelatedAccess2 < this.options.MaxSecondaryCorrelationPeriod)
                     continue;
@@ -80,7 +112,12 @@ public sealed class DataCache : IAsyncDisposable
                     else
                         DeallocateNode(currentNode);
                 }
+
+                if (currentNode.Previous != null)
+                    Interlocked.Decrement(ref currentNode.Previous.Value.WriteLock);
             }
+
+            Interlocked.Decrement(ref currentSlot.WriteLock);
 
             await Task.Delay(this.options.LazyWriterInterval);
         } while (!shutdown);
@@ -122,7 +159,7 @@ public sealed class DataCache : IAsyncDisposable
                 this.allocated.AddLast(slot);
             this.cache[pageId] = slot;
         }
-        else 
+        else
             slot.UpdateAccess(ticks, ticks - slot.LastAccess <= this.options.CorrelatedReferencePeriod);
 
         return slot.Page;
@@ -138,7 +175,7 @@ public sealed class DataCache : IAsyncDisposable
                 slot.GenerationFlag = currentFlag;
 
         LinkedListNode<Slot> node;
-        for (;;)
+        for (; ; )
         {
             var tryNode = this.allocated.First;
             if (tryNode == null)
@@ -159,14 +196,14 @@ public sealed class DataCache : IAsyncDisposable
         }
     }
 
-    private record struct Slot(BufferPool.Buffer Buffer, Page Page)
+    private record Slot(BufferPool.Buffer Buffer, Page Page)
     {
         public bool GenerationFlag { get; set; }
         public long LastAccess { get; private set; }
         public long UncorrelatedAccess1 { get; set; }
         public long UncorrelatedAccess2 { get; private set; }
         public bool Invalid { get; set; }
-        public object? WriteLock { get; set; }
+        public int WriteLock;
         public Slot(BufferPool.Buffer buffer, Page page, long ticks, bool generationFlag) : this(buffer, page)
         {
             this.GenerationFlag = generationFlag;
