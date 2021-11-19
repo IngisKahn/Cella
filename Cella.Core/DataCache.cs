@@ -238,33 +238,34 @@ public sealed class DataCache : IAsyncDisposable
                 LinkedList<Slot> gatherList = new();
                 gatherList.AddFirst(currentNode);
 
-                var previous = currentNode.Previous;
-                while (DataCache.TryLock(previous!.Value))
+                var currentId = currentNode.Value.Page.FullPageId;
+
+                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId - 1}, out var previous) && DataCache.TryLock(previous))
                 {
-                    if (!previous.Value.Invalid && previous.Value.GenerationFlag == currentFlag && previous.Value.Page.IsDirty)
+                    if (!previous.Invalid && previous.GenerationFlag == currentFlag && previous.Page.IsDirty)
                     {
                         gatherList.AddFirst(previous);
-                        previous.Value.GenerationFlag = !currentFlag;
-                        previous = previous.Previous;
+                        previous.GenerationFlag = !currentFlag;
+                        currentId = previous.Page.FullPageId;
                     }
                     else
                     {
-                        DataCache.Unlock(previous.Value);
+                        DataCache.Unlock(previous);
                         break;
                     }
                 }
-                var next = currentNode.Next;
-                while (DataCache.TryLock(next!.Value))
+                currentId = currentNode.Value.Page.FullPageId;
+                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId + 1 }, out var next) && DataCache.TryLock(next))
                 {
-                    if (!next.Value.Invalid && next.Value.GenerationFlag == currentFlag && next.Value.Page.IsDirty)
+                    if (!next.Invalid && next.GenerationFlag == currentFlag && next.Page.IsDirty)
                     {
                         gatherList.AddLast(next);
-                        next.Value.GenerationFlag = !currentFlag;
-                        next = next.Previous;
+                        next.GenerationFlag = !currentFlag;
+                        currentId = next.Page.FullPageId;
                     }
                     else
                     {
-                        DataCache.Unlock(next.Value);
+                        DataCache.Unlock(next);
                         break;
                     }
                 }
@@ -277,10 +278,8 @@ public sealed class DataCache : IAsyncDisposable
             }
             // ReSharper disable once AccessToModifiedClosure - completes synchronously
             var nextNode = DataCache.TryLockValid(() => currentNode.Next);
-            if (nextNode == null)
-                return;
 
-            var isDone = (currentNode = nextNode) == this.allocated.First;
+            var isDone = nextNode == null || (currentNode = nextNode) == this.allocated.First;
                 
             DataCache.Unlock(currentNode.Value);
             
