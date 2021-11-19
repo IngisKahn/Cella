@@ -1,7 +1,7 @@
-﻿using Xunit;
-
-namespace Cella.Core.Tests
+﻿namespace Cella.Core.Tests
 {
+    using Xunit;
+
     public class BufferPoolTests
     {
         [Fact]

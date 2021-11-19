@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Cella.Core.Pages;
-using Xunit;
-
-namespace Cella.Core.Tests
+﻿namespace Cella.Core.Tests
 {
+    using System.Threading.Tasks;
+    using Cella.Core.Pages;
+    using Xunit;
+
     public class DataCacheTests
     {
         private class MockPage : Page

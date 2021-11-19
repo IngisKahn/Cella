@@ -1,9 +1,8 @@
-﻿using System;
-using System.Security.Cryptography;
-using Xunit;
-
-namespace Cella.Core.Tests
+﻿namespace Cella.Core.Tests
 {
+    using System;
+    using Xunit;
+
     public class PairingHeapTests
     {
         [Fact]

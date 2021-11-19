@@ -1,8 +1,8 @@
-using System.Linq;
-using Xunit;
-
 namespace Cella.Core.Tests
 {
+    using System.Linq;
+    using Xunit;
+
     public class DatabaseTests
     {
         [Fact]
