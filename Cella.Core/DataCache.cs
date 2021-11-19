@@ -44,6 +44,7 @@ public sealed class DataCache : IAsyncDisposable
     {
         for (; Interlocked.CompareExchange(ref slot.WriteLock, 1, 0) == 1;) { }
     }
+    private static bool TryLock(Slot slot) => Interlocked.CompareExchange(ref slot.WriteLock, 1, 0) == 0;
 
     private static void Unlock(Slot slot) => Interlocked.Decrement(ref slot.WriteLock);
 
@@ -141,7 +142,7 @@ public sealed class DataCache : IAsyncDisposable
         });
     }
 
-    private static LinkedListNode<Slot>? TryLock(Func<LinkedListNode<Slot>?> getNode)
+    private static LinkedListNode<Slot>? TryLockValid(Func<LinkedListNode<Slot>?> getNode)
     {
         LinkedListNode<Slot>? node;
         for (node = getNode(); node != null; node = getNode())
@@ -184,9 +185,9 @@ public sealed class DataCache : IAsyncDisposable
 
 
 
-        var last = DataCache.TryLock(() => this.allocated.Last)?.Value;
+        var last = DataCache.TryLockValid(() => this.allocated.Last)?.Value;
 
-        var first = last != null ? DataCache.TryLock(() => this.allocated.First)?.Value : null;
+        var first = last != null ? DataCache.TryLockValid(() => this.allocated.First)?.Value : null;
 
         this.allocated.AddLast(slot);
 
@@ -202,17 +203,17 @@ public sealed class DataCache : IAsyncDisposable
     }
 
     // call every min if 10MB of log used
-    public void CheckPoint()
+    public async Task CheckPoint()
     {
         var currentFlag = this.generationFlag;
         this.generationFlag = !currentFlag;
 
-        var node = DataCache.TryLock(() => this.allocated.First);
+        var node = DataCache.TryLockValid(() => this.allocated.First);
 
         if (node != null)
         {
             var current = node;
-            for (;;)
+            for (; ; )
             {
                 current!.Value.GenerationFlag = currentFlag;
                 var next = current.Next;
@@ -225,23 +226,66 @@ public sealed class DataCache : IAsyncDisposable
                 current = next;
             }
         }
+        var currentNode = DataCache.TryLockValid(() => this.allocated.First);
+        if (currentNode == null)
+            return; // nothing to do
+
         for (; ; )
         {
-            var tryNode = this.allocated.First;
-            if (tryNode == null)
+            if (currentNode.Value.GenerationFlag == currentFlag && currentNode.Value.Page.IsDirty)
             {
-                if (this.allocated.Count == 0) return; // nothing to do
+                currentNode.Value.GenerationFlag = !currentFlag;
+                LinkedList<Slot> gatherList = new();
+                gatherList.AddFirst(currentNode);
 
-                continue;
-            }
+                var previous = currentNode.Previous;
+                while (DataCache.TryLock(previous!.Value))
+                {
+                    if (!previous.Value.Invalid && previous.Value.GenerationFlag == currentFlag && previous.Value.Page.IsDirty)
+                    {
+                        gatherList.AddFirst(previous);
+                        previous.Value.GenerationFlag = !currentFlag;
+                        previous = previous.Previous;
+                    }
+                    else
+                    {
+                        DataCache.Unlock(previous.Value);
+                        break;
+                    }
+                }
+                var next = currentNode.Next;
+                while (DataCache.TryLock(next!.Value))
+                {
+                    if (!next.Value.Invalid && next.Value.GenerationFlag == currentFlag && next.Value.Page.IsDirty)
+                    {
+                        gatherList.AddLast(next);
+                        next.Value.GenerationFlag = !currentFlag;
+                        next = next.Previous;
+                    }
+                    else
+                    {
+                        DataCache.Unlock(next.Value);
+                        break;
+                    }
+                }
 
-            node = tryNode;
-            var slot = node.Value;
-            Monitor.Enter(slot);
-            if (slot.Invalid)
-            {
-                Monitor.Exit(slot);
+                foreach (var slot in gatherList)
+                {
+                    await slot.Page.FlushAsync();
+                    DataCache.Unlock(slot);
+                }
             }
+            // ReSharper disable once AccessToModifiedClosure - completes synchronously
+            var nextNode = DataCache.TryLockValid(() => currentNode.Next);
+            if (nextNode == null)
+                return;
+
+            var isDone = (currentNode = nextNode) == this.allocated.First;
+                
+            DataCache.Unlock(currentNode.Value);
+            
+            if (isDone)
+                return;
         }
     }
 

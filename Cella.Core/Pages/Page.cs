@@ -5,7 +5,7 @@ public abstract class Page
     public FullPageId FullPageId { get; set; }
     public bool IsDirty { get; set; }
 
-    public async Task FlushAsync()
+    public Task FlushAsync()
     {
         throw new NotImplementedException();
     }
