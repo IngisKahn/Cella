@@ -9,7 +9,8 @@ public class Database
     public DatabaseFile[] LogFiles { get; }
     public PrimaryFileGroup PrimaryFileGroup { get; }
     public FileGroup[] FileGroups { get; }
-    public string Name { get; }
+    public string Name { get; set; }
+    public FileGroup DefaultFileGroup { get; set; }
 
     public Database(string name, PrimaryFileGroup primaryFileGroup, IEnumerable<FileGroup> fileGroups, IEnumerable<DatabaseFile> logFiles)
     {
@@ -17,5 +18,6 @@ public class Database
         this.PrimaryFileGroup = primaryFileGroup;
         this.FileGroups = fileGroups.Prepend(primaryFileGroup).ToArray();
         this.LogFiles = logFiles.ToArray();
+        this.DefaultFileGroup = primaryFileGroup;
     }
 }

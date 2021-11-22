@@ -1,3 +1,3 @@
 ﻿namespace Cella.Core;
 
-public record struct FullPageId(byte DatabaseId, ushort FileId, uint PageId);
+public record struct FullPageId(ushort DatabaseId, ushort FileId, uint PageId);

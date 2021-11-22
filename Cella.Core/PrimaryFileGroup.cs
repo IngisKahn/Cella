@@ -2,9 +2,13 @@
 
 public class PrimaryFileGroup : FileGroup
 {
-    public DatabaseFile PrimaryFile { get; set; }
+    public ManagedFile PrimaryFile { get; }
 
-    public PrimaryFileGroup(DatabaseFile primaryFile, IEnumerable<DatabaseFile>? files = null) 
-        : base("primary", files?.Prepend(primaryFile) ?? new[] { primaryFile }) =>
+    public PrimaryFileGroup(ManagedFile primaryFile)
+        : base("primary")
+    {
+        if (primaryFile.Type != DatabaseFileType.Pages)
+            throw new ArgumentException("Primary data file must contain page data");
         this.PrimaryFile = primaryFile;
+    }
 }
