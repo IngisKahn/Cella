@@ -2,7 +2,7 @@
 
 public class FileGroup
 {
-    public List<DatabaseFile> DataFiles { get; }
+    public List<DatabaseFile> DataFiles { get; } = new();
     public string Name { get; }
     public bool AutoGrowAllFiles { get; set; }
     public FileGroup(string name) => this.Name = name;
