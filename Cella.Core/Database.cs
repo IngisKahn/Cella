@@ -21,20 +21,22 @@ public class Database : IDatabase
 
         var fileGroups =
             (databaseOptions.FileGroups ?? Array.Empty<FileGroupOptions>()).Select(fgo =>
-                new FileGroup(this, fileMill, fgo.Name));
+                new FileGroup(this, fileMill, fgo));
+
 
         this.FileGroups = fileGroups.Prepend(this.PrimaryFileGroup).ToArray();
 
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fileGroup => fileGroup.IsDefault) ?? this.FileGroups.First();
 
-        this.LogFiles = new(this, fileMill, "Log");
-        if (databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any())
-            this.LogFiles.DataFiles.AddRange(
-                databaseOptions.LogFiles.Select(lf => fileMill.CreateManaged(this.LogFiles, lf)));
-        else
-            this.LogFiles.DataFiles.Add(fileMill.CreateManaged(this.LogFiles,
-                new(this.Name + " Log", this.Name + ".ldf") 
-                    { Extents = Math.Max(this.FileGroups.Sum(fg => fg.DataFiles.OfType<IManagedFile>().Sum(df => df.InitialSize)), 8)}));
+        this.LogFiles = new(this, fileMill, new("Log",databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any() ? databaseOptions.LogFiles
+            : new[]
+            {
+                new FileOptions(this.Name + " Log", this.Name + ".ldf")
+                {
+                    Extents = Math.Max(
+                        this.FileGroups.Sum(fg => fg.DataFiles.OfType<IManagedFile>().Sum(df => df.InitialSize)), 8)
+                }
+            }));
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fg => fg.IsDefault) ?? this.PrimaryFileGroup;
     }
 }

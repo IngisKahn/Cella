@@ -7,5 +7,5 @@ public record FileOptions(string Name, string PhysicalName)
     public AutoGrowthType AutoGrowthType { get; init; } = AutoGrowthType.ByExtent;
     public uint AutoGrowthAmount { get; init; } = 16;
 
-    public DatabaseFileType Type { get; init; } = DatabaseFileType.Fixed;
+    public DatabaseFileType Type { get; init; } = DatabaseFileType.Pages;
 }

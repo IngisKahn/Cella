@@ -9,7 +9,15 @@ public class FileGroup
     public bool AutoGrowAllFiles { get; set; }
     public bool IsDefault { get; set; }
     public bool IsFileStream { get; set; }
-    public FileGroup(IDatabase database, IFileMill fileMill, string name)
+    public FileGroup(IDatabase database, IFileMill fileMill, FileGroupOptions options)
+    {
+        this.FileMill = fileMill;
+        this.Name = options.Name;
+        this.Database = database;
+        this.IsDefault = options.IsDefault;
+        this.DataFiles.AddRange(options.FileOptions.Select(fo => fileMill.Create(this, fo)));
+    }
+    protected FileGroup(IDatabase database, IFileMill fileMill, string name)
     {
         this.FileMill = fileMill;
         this.Name = name;

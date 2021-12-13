@@ -16,7 +16,7 @@ public class PrimaryFileGroup : FileGroup
         else
         {
             var dataFiles = fileOptionsEnumerable.Select(o => this.FileMill.Create(this, o)).ToArray();
-            this.PrimaryFile = (ManagedFile)dataFiles[0];
+            this.PrimaryFile = (IManagedFile)dataFiles[0];
             this.DataFiles.AddRange(dataFiles);
         }
     }
