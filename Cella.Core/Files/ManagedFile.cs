@@ -1,15 +1,15 @@
 ﻿namespace Cella.Core;
 
-public sealed class ManagedFile : DatabaseFile, IAsyncDisposable
+public sealed class ManagedFile : DatabaseFile, IAsyncDisposable, IManagedFile
 {
     private FileStream? fileStream;
 
-    public ManagedFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type) 
+    public ManagedFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type)
         : base(fileGroup, id, name, physicalName, type)
     {
     }
 
-    public ManagedFile(FileGroup fileGroup, ushort id, string name, string physicalName, Guid guid, DatabaseFileType type) 
+    public ManagedFile(FileGroup fileGroup, ushort id, string name, string physicalName, Guid guid, DatabaseFileType type)
         : base(fileGroup, id, name, physicalName, type, guid)
     {
     }

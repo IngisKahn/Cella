@@ -25,7 +25,7 @@ public enum DatabaseFileState
     Defunct
 }
 
-public class DatabaseFile
+public class DatabaseFile : IDatabaseFile
 {
     public ushort Id { get; }
     public Guid Guid { get; }
@@ -39,7 +39,7 @@ public class DatabaseFile
     public bool IsSparse { get; init; }
     public bool IsNameReserved { get; set; }
 
-    public DatabaseFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type) 
+    public DatabaseFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type)
         : this(fileGroup, id, name, physicalName, type, Guid.NewGuid()) { }
     public DatabaseFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
     {
