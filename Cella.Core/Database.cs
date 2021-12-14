@@ -11,6 +11,10 @@ public class Database : IDatabase
     public PrimaryFileGroup PrimaryFileGroup { get; }
     public FileGroup[] FileGroups { get; }
     public string Name { get; set; }
+    public DatabaseUserAccess UserAccess { get; set; }
+    public DatabaseStatus Status { get; } = DatabaseStatus.Offline;
+    public DatabaseMode Mode { get; set; }
+    public bool IsAutoClose { get; set; }
     public FileGroup DefaultFileGroup { get; set; }
 
     public Database(IFileMill fileMill, DatabaseOptions databaseOptions)
