@@ -5,7 +5,19 @@ namespace Cella.Core;
 public class Database : IDatabase
 {
     private readonly IFileMill fileMill;
-    public Collection<DatabaseObject> Objects { get; set; } = new();
+    public List<DatabaseObject> Objects { get; set; } = new();
+    // Indexes
+    // Columns
+    // IdentityColumns
+    // IndexColumns
+    // DefaultConstraints
+    // ComputedColumns
+    // Partitions
+    // AllocationUnits
+    // FileGroups
+    // Files
+    // NodeStores
+    // EdgeStores
 
     public FileGroup LogFiles { get; }
     public PrimaryFileGroup PrimaryFileGroup { get; }
@@ -21,6 +33,7 @@ public class Database : IDatabase
     {
         this.fileMill = fileMill;
         this.Name = databaseOptions.Name;
+        this.UserAccess = databaseOptions.UserAccess;
         this.PrimaryFileGroup = new(this, fileMill, databaseOptions.PrimaryFiles);
 
         var fileGroups =
