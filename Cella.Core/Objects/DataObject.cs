@@ -28,7 +28,7 @@ public enum ObjectType
     TableType
 }
 
-public class DatabaseObject
+public abstract class DataObject
 {
     //public void Store() {}
     //public void Manipulate() {}
@@ -36,7 +36,7 @@ public class DatabaseObject
     public int Id { get; }
     public string Name { get; }
     public Schema Schema { get; }
-    public DatabaseObject? Parent { get; }
+    public DataObject? Parent { get; }
 
     public ObjectType Type { get; } // OO
     public DateTime CreatedOn { get; }
@@ -44,6 +44,7 @@ public class DatabaseObject
     public bool IsInternal { get; }
     public bool IsPublished { get; }
     public bool IsSchemaPublished { get; }
+    public void CopyTo(IDatabase database) => throw new NotImplementedException();
 }
 
 public enum IndexType
@@ -58,12 +59,12 @@ public enum IndexType
     NonClusteredHash
 }
 
-public class Index : DatabaseObject
+public class Index : DataObject
 {
 
 }
 
-public class Table : DatabaseObject
+public class Table : DataObject
 {
 
 }

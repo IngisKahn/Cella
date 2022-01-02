@@ -1,6 +1,7 @@
 ﻿namespace Cella.Core;
 
 using System.Globalization;
+using Objects;
 
 public enum DatabaseUserAccess
 {
@@ -49,6 +50,9 @@ public enum DelayedDurability
 
 public interface IDatabase
 {
+    public IEnumerable<DataObject> DataObjects { get; }
+    public void Add(DataObject dataObject);
+
     /// <summary>
     /// Name of database, unique within an instance
     /// </summary>

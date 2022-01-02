@@ -3,6 +3,7 @@
 namespace Cella.Core;
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using DataSpaces;
 using Files;
 using Objects;
@@ -10,7 +11,7 @@ using Objects;
 public class Database : IDatabase
 {
     private readonly IFileMill fileMill;
-    public List<DatabaseObject> Objects { get; set; } = new();
+    public List<DataObject> Objects { get; set; } = new();
     // Indexes
     // Columns
     // IdentityColumns
@@ -31,6 +32,9 @@ public class Database : IDatabase
     public FileGroup LogFiles { get; }
     public PrimaryFileGroup PrimaryFileGroup { get; }
     public FileGroup[] FileGroups { get; }
+    public IEnumerable<DataObject> DataObjects => this.Objects;
+    public void Add(DataObject dataObject) => dataObject.CopyTo(this);
+
     public string Name { get; set; }
     public int Id { get; }
     public int? SourceId { get; }
