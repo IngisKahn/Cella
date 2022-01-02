@@ -1,5 +1,7 @@
 ﻿namespace Cella.Core;
 
+using DataSpaces;
+
 public enum AutoGrowthType
 {
     ByPercent,
@@ -25,25 +27,30 @@ public enum DatabaseFileState
     Defunct
 }
 
-public class DatabaseFile : IDatabaseFile
+public abstract class DatabaseFile : IDatabaseFile
 {
     public ushort Id { get; }
     public Guid Guid { get; }
     public string Name { get; }
     public string PhysicalName { get; }
     public DatabaseFileType Type { get; }
-    public FileGroup FileGroup { get; }
+    public decimal CreateLsn { get; set; }
+    public decimal DropLsn { get; set; }
+    public decimal ReadOnlyLsn { get; set; }
+    public decimal ReadWriteLsn { get; set; }
+    public decimal DifferentialBaseLsn { get; set; }
+    public DataSpace DataSpace { get; }
     public DatabaseFileState State { get; set; } = DatabaseFileState.Offline;
     public bool IsMediaReadOnly { get; init; }
     public bool IsReadOnly { get; set; }
     public bool IsSparse { get; init; }
     public bool IsNameReserved { get; set; }
 
-    public DatabaseFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type)
-        : this(fileGroup, id, name, physicalName, type, Guid.NewGuid()) { }
-    public DatabaseFile(FileGroup fileGroup, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
+    public DatabaseFile(DataSpace dataSpace, ushort id, string name, string physicalName, DatabaseFileType type)
+        : this(dataSpace, id, name, physicalName, type, Guid.NewGuid()) { }
+    public DatabaseFile(DataSpace dataSpace, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
     {
-        this.FileGroup = fileGroup;
+        this.DataSpace = dataSpace;
         this.Id = id;
         this.Name = name;
         this.PhysicalName = physicalName;

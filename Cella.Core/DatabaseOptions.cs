@@ -1,5 +1,7 @@
 ﻿namespace Cella.Core;
 
+using DataSpaces;
+
 public record DatabaseOptions(string Name)
 {
     public DatabaseUserAccess UserAccess { get; init; } = DatabaseUserAccess.Multi;
@@ -26,6 +28,6 @@ public enum RecoveryMode
 public enum PageVerifyMode
 {
     None,
-    Checksum,
-    TornPageDetection
+    TornPageDetection,
+    Checksum
 }

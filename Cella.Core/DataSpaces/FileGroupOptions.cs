@@ -1,4 +1,4 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Core.DataSpaces;
 
 public record FileGroupOptions(string Name, IEnumerable<FileOptions> FileOptions)
 {

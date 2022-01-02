@@ -1,6 +1,6 @@
 ﻿namespace Cella.Core;
 
-public class Instance
+public class Server
 {
     private readonly List<IDatabase> databases = new();
     private readonly IDatabaseMill databaseMill;
@@ -8,7 +8,7 @@ public class Instance
     public string Name { get; }
     public string Location { get; }
 
-    public Instance(IDatabaseMill databaseMill, string name, string location)
+    public Server(IDatabaseMill databaseMill, string name, string location)
     {
         this.databaseMill = databaseMill;
         this.Name = name;
@@ -24,27 +24,27 @@ public class Instance
     }
 }
 
-public class InstanceLoader //name sucks
+public class ServerLoader //name sucks
 {
     private readonly IDatabaseMill databaseMill;
 
-    public InstanceLoader(IDatabaseMill databaseMill)
+    public ServerLoader(IDatabaseMill databaseMill)
     {
         ArgumentNullException.ThrowIfNull(databaseMill);
         this.databaseMill = databaseMill;
     }
 
-    public Instance CreateNew(string name, string location)
+    public Server CreateNew(string name, string location)
     {
-        Instance instance = new(this.databaseMill, name, location);
+        Server server = new(this.databaseMill, name, location);
         // create model
+        var model = server.CreateDatabase(new("model"));
         // populate model
-        // copy to temp
         // copy to master
         // populate master
 
-        return instance;
+        return server;
     }
 
-    // OpenExisting
+    // OpenExisting(path to master)
 }

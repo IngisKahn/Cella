@@ -1,11 +1,13 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Core.DataSpaces;
+
+using Files;
 
 public class PrimaryFileGroup : FileGroup
 {
     public IManagedFile PrimaryFile { get; }
 
     public PrimaryFileGroup(IDatabase database, IFileMill fileMill, IEnumerable<FileOptions>? fileOptions)
-        : base(database, fileMill, "primary")
+        : base(database, fileMill, "primary", 1)
     {
         var fileOptionsEnumerable = fileOptions as FileOptions[] ?? (fileOptions ?? Array.Empty<FileOptions>()).ToArray();
         if (!fileOptionsEnumerable.Any())
@@ -22,7 +24,7 @@ public class PrimaryFileGroup : FileGroup
     }
 
     public PrimaryFileGroup(IDatabase database, IFileMill fileMill, IManagedFile primaryFile)
-        : base(database, fileMill, "primary")
+        : base(database, fileMill, "primary", 1)
     {
         if (primaryFile.Type != DatabaseFileType.Pages)
             throw new ArgumentException("Primary data file must contain page data");

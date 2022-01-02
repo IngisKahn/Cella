@@ -1,4 +1,6 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Core.Files;
+
+using DataSpaces;
 
 public interface IFileMill
 {

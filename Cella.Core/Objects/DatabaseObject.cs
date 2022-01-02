@@ -1,4 +1,6 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Core.Objects;
+
+using System.ComponentModel.DataAnnotations;
 
 public enum ObjectType
 {
@@ -30,8 +32,12 @@ public class DatabaseObject
 {
     //public void Store() {}
     //public void Manipulate() {}
+    [Key]
     public int Id { get; }
     public string Name { get; }
+    public Schema Schema { get; }
+    public DatabaseObject? Parent { get; }
+
     public ObjectType Type { get; } // OO
     public DateTime CreatedOn { get; }
     public DateTime ModifiedOn { get; }
@@ -52,10 +58,12 @@ public enum IndexType
     NonClusteredHash
 }
 
-public class Index
+public class Index : DatabaseObject
 {
-    public int Id { get; }
-    public string Name { get; }
-    public IndexType Type { get; }
+
+}
+
+public class Table : DatabaseObject
+{
 
 }

@@ -1,10 +1,11 @@
 ﻿namespace Cella.Core
 {
     using System;
+    using DataSpaces;
 
     public interface IDatabaseFile
     {
-        FileGroup FileGroup { get; }
+        DataSpace DataSpace { get; }
         Guid Guid { get; }
         ushort Id { get; }
         bool IsMediaReadOnly { get; init; }
@@ -15,6 +16,11 @@
         string PhysicalName { get; }
         DatabaseFileState State { get; set; }
         DatabaseFileType Type { get; }
+        decimal CreateLsn { get; set; }
+        decimal DropLsn { get; set; }
+        decimal ReadOnlyLsn { get; set; }
+        decimal ReadWriteLsn { get; set; }
+        decimal DifferentialBaseLsn { get; set; }
 
         void Create();
         void Validate();

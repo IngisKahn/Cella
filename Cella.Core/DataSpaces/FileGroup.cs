@@ -1,26 +1,31 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Core.DataSpaces;
 
-public class FileGroup
+using Files;
+
+public abstract class BaseFileGroup : DataSpace
+{
+    public Guid Guid { get; init; }
+    public bool IsReadOnly { get; set; }
+    public bool AutoGrowAllFiles { get; set; }
+
+    protected BaseFileGroup(int id, string name, DataSpaceType type) : base(id, name, type) { }
+}
+
+public class FileGroup : BaseFileGroup
 {
     protected IFileMill FileMill { get; }
     public List<IDatabaseFile> DataFiles { get; } = new();
-    public string Name { get; }
     public IDatabase Database { get; }
-    public bool AutoGrowAllFiles { get; set; }
-    public bool IsDefault { get; set; }
-    public bool IsFileStream { get; set; }
-    public FileGroup(IDatabase database, IFileMill fileMill, FileGroupOptions options)
+    public FileGroup(IDatabase database, IFileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;
-        this.Name = options.Name;
         this.Database = database;
         this.IsDefault = options.IsDefault;
         this.DataFiles.AddRange(options.FileOptions.Select(fo => fileMill.Create(this, fo)));
     }
-    protected FileGroup(IDatabase database, IFileMill fileMill, string name)
+    protected FileGroup(IDatabase database, IFileMill fileMill, string name, int id) : base(id, name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;
-        this.Name = name;
         this.Database = database;
     }
     public void GrowRequest(ManagedFile file)
