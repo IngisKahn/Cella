@@ -39,7 +39,7 @@ public class Database : IDatabase
     public int Id { get; }
     public int? SourceId { get; }
     public DateTime CreatedOn { get; }
-    public CultureInfo CollationCulture { get; set; }
+    public CultureInfo CollationCulture { get; set; } = CultureInfo.InstalledUICulture;
     public CompareOptions CollationOptions { get; set; }
     public DatabaseUserAccess UserAccess { get; set; }
     public DatabaseStatus Status { get; } = DatabaseStatus.Offline;
@@ -52,8 +52,8 @@ public class Database : IDatabase
     public PageVerifyMode PageVerifyMode { get; }
     public bool IsAutoCreateStatsOn { get; }
     public bool IsAutoCreateStatsIncrementalOn { get; }
-    public CultureInfo DefaultCultureInfo { get; }
-    public CultureInfo DefaultFullTextCultureInfo { get; }
+    public CultureInfo DefaultCultureInfo { get; } = CultureInfo.InstalledUICulture;
+    public CultureInfo DefaultFullTextCultureInfo { get; } = CultureInfo.InstalledUICulture;
     public bool IsTransformNoiseWordsOn { get; }
     public int TargetRecoveryTimeInSeconds { get; }
     public DelayedDurability DelayedDurability { get; }
