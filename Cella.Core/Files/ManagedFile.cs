@@ -16,7 +16,10 @@ public abstract class ManagedFile : DatabaseFile, IAsyncDisposable, IManagedFile
     {
     }
 
-    public int InitialSize { get; init; } = 48;
+    /// <summary>
+    /// Must be odd
+    /// </summary>
+    public int InitialSize { get; init; } = 49;
     public int Size { get; set; }
     public AutoGrowthType AutoGrowthType { get; init; } = AutoGrowthType.ByExtent;
     public uint AutoGrowthAmount { get; init; } = 16;

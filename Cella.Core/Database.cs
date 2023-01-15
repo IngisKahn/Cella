@@ -36,7 +36,8 @@ public class Database : IDatabase
     public void Add(DataObject dataObject) => dataObject.CopyTo(this);
 
     public string Name { get; set; }
-    public int Id { get; }
+    public DatabaseId DatabaseId { get; }
+    public Guid Id { get; }
     public int? SourceId { get; }
     public DateTime CreatedOn { get; }
     public CultureInfo CollationCulture { get; set; } = CultureInfo.InstalledUICulture;

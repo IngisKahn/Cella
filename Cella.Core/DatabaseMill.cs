@@ -14,7 +14,7 @@ public class DatabaseMill : IDatabaseMill
 
     public IDatabase Create(DatabaseOptions databaseOptions, IDatabase model)
     {
-        var database = new Database(fileMill, databaseOptions);
+        var database = new Database(fileMill, databaseOptions) {};
         foreach (var dataObject in model.DataObjects)
             database.Add(dataObject);
         return database;

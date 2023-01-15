@@ -7,12 +7,14 @@ public class Server
 
     public string Name { get; }
     public string Location { get; }
+    public Guid Id { get; }
 
-    public Server(IDatabaseMill databaseMill, string name, string location)
+    public Server(IDatabaseMill databaseMill, string name, string location, Guid id)
     {
         this.databaseMill = databaseMill;
         this.Name = name;
         this.Location = location;
+        this.Id = id;
     }
 
     public IDatabase CreateEmptyDatabase(DatabaseOptions databaseOptions)
@@ -31,11 +33,11 @@ public class Server
     }
 }
 
-public class ServerLoader //name sucks
+public class ServerMill 
 {
     private readonly IDatabaseMill databaseMill;
 
-    public ServerLoader(IDatabaseMill databaseMill)
+    public ServerMill(IDatabaseMill databaseMill)
     {
         ArgumentNullException.ThrowIfNull(databaseMill);
         this.databaseMill = databaseMill;
@@ -43,7 +45,7 @@ public class ServerLoader //name sucks
 
     public Server CreateNew(string name, string location)
     {
-        Server server = new(this.databaseMill, name, location);
+        Server server = new(this.databaseMill, name, location, Guid.NewGuid());
         // create model
         var model = server.CreateEmptyDatabase(new("model"));
         // populate model

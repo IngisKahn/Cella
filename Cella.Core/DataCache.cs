@@ -50,7 +50,6 @@ public sealed class DataCache : IAsyncDisposable
 
     private async Task LazyWriterWorkerAsync()
     {
-
         do
         {
             // check if we are running low
@@ -240,8 +239,7 @@ public sealed class DataCache : IAsyncDisposable
 
                 var currentId = currentNode.Value.Page.FullPageId;
 
-                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId - 1}, out var previous) && DataCache.TryLock(previous))
-                {
+                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId.Previous}, out var previous) && DataCache.TryLock(previous))
                     if (!previous.Invalid && previous.GenerationFlag == currentFlag && previous.Page.IsDirty)
                     {
                         gatherList.AddFirst(previous);
@@ -253,10 +251,9 @@ public sealed class DataCache : IAsyncDisposable
                         DataCache.Unlock(previous);
                         break;
                     }
-                }
+
                 currentId = currentNode.Value.Page.FullPageId;
-                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId + 1 }, out var next) && DataCache.TryLock(next))
-                {
+                while (this.cache.TryGetValue(currentId with { PageId = currentId.PageId.Next }, out var next) && DataCache.TryLock(next))
                     if (!next.Invalid && next.GenerationFlag == currentFlag && next.Page.IsDirty)
                     {
                         gatherList.AddLast(next);
@@ -268,7 +265,8 @@ public sealed class DataCache : IAsyncDisposable
                         DataCache.Unlock(next);
                         break;
                     }
-                }
+
+                // TODO: write gather list to log
 
                 foreach (var slot in gatherList)
                 {

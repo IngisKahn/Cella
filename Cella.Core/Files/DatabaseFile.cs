@@ -27,6 +27,18 @@ public enum DatabaseFileState
     Defunct
 }
 
+public enum PageSize : byte
+{
+    Kb1,
+    Kb2,
+    Kb4,
+    Kb8,
+    Kb16,
+    Kb32,
+    Kb64,
+    Default = Kb8
+}
+
 public abstract class DatabaseFile : IDatabaseFile
 {
     public ushort Id { get; }

@@ -60,7 +60,11 @@ public interface IDatabase
     /// <summary>
     /// ID of the database, unique within an instance
     /// </summary>
-    int Id { get; }
+    DatabaseId DatabaseId { get; }
+    /// <summary>
+    /// Unique id 
+    /// </summary>
+    Guid Id { get; }
     /// <summary>
     /// Non-NULL = ID of the source database of this database snapshot.
     /// NULL = Not a database snapshot.
