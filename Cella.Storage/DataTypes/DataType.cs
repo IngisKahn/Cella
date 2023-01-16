@@ -1,4 +1,4 @@
-﻿namespace Cella.Core.DataTypes;
+﻿namespace Cella.Storage.DataTypes;
 
 using System.Runtime.InteropServices;
 using System.Text;

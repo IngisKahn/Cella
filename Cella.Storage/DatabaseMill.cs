@@ -1,4 +1,4 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Storage;
 
 using Files;
 

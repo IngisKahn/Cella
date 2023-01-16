@@ -3,8 +3,9 @@ namespace Cella.Core.Tests
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using DataSpaces;
-    using Files;
+    using Storage;
+    using Storage.DataSpaces;
+    using Storage.Files;
     using Xunit;
 
     public class DatabaseTests

@@ -1,6 +1,7 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Storage;
 
 using DataSpaces;
+using FileOptions = Files.FileOptions;
 
 public record DatabaseOptions(string Name)
 {

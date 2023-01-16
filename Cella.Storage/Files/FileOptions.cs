@@ -1,4 +1,4 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Storage.Files;
 
 public record FileOptions(string Name, string PhysicalName)
 {

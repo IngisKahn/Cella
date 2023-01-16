@@ -1,6 +1,8 @@
-﻿namespace Cella.Core.Pages;
+﻿namespace Cella.Storage.Pages;
 
-public abstract class Page
+using Core;
+
+public abstract class Page : IPage
 {
     public FullPageId FullPageId { get; set; }
     public bool IsDirty { get; set; }

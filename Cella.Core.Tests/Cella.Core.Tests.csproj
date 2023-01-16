@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cella.Core\Cella.Core.csproj" />
+    <ProjectReference Include="..\Cella.Storage\Cella.Storage.csproj" />
   </ItemGroup>
 
 </Project>

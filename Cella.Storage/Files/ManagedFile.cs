@@ -1,5 +1,6 @@
-﻿namespace Cella.Core;
+﻿namespace Cella.Storage.Files;
 
+using Core;
 using DataSpaces;
 
 public abstract class ManagedFile : DatabaseFile, IAsyncDisposable, IManagedFile

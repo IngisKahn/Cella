@@ -1,7 +1,6 @@
 ﻿namespace Cella.Core;
 
 using System.Collections.Concurrent;
-using Pages;
 
 public sealed class DataCache : IAsyncDisposable
 {
@@ -156,7 +155,7 @@ public sealed class DataCache : IAsyncDisposable
         return node;
     }
 
-    public async ValueTask<Page> GetPageAsync(FullPageId pageId, Func<Page> loader)
+    public async ValueTask<IPage> GetPageAsync(FullPageId pageId, Func<IPage> loader)
     {
         var ticks = Environment.TickCount64;
         var gotIt = false;
@@ -178,7 +177,7 @@ public sealed class DataCache : IAsyncDisposable
         // get a free buffer
         BufferPool.Buffer buffer;
         while (!this.freeBuffers.TryDequeue(out buffer)) // learn from this
-            await Task.Delay(this.options.LazyWriterInterval);
+            await Task.Delay(this.options.LazyWriterInterval); 
 
         slot = new(buffer, loader(), ticks, this.generationFlag) { WriteLock = 1 };
 
@@ -296,11 +295,11 @@ public sealed class DataCache : IAsyncDisposable
         int LazyWriterSleepInterval
     );
 
-    private record Slot(BufferPool.Buffer Buffer, Page Page)
+    private record Slot(BufferPool.Buffer Buffer, IPage Page)
     {
         public int WriteLock;
 
-        public Slot(BufferPool.Buffer buffer, Page page, long ticks, bool generationFlag) : this(buffer, page)
+        public Slot(BufferPool.Buffer buffer, IPage page, long ticks, bool generationFlag) : this(buffer, page)
         {
             this.GenerationFlag = generationFlag;
             this.LastAccess = this.UncorrelatedAccess1 = ticks;
@@ -322,4 +321,11 @@ public sealed class DataCache : IAsyncDisposable
             this.UncorrelatedAccess1 = ticks;
         }
     }
+}
+
+public interface IPage
+{
+    bool IsDirty { get; }
+    FullPageId FullPageId { get; }
+    Task FlushAsync();
 }

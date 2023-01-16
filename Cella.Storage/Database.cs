@@ -1,12 +1,11 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Cella.Core;
+﻿namespace Cella.Storage;
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
+using Core;
 using DataSpaces;
 using Files;
 using Objects;
+using FileOptions = System.IO.FileOptions;
 
 public class Database : IDatabase
 {
@@ -85,7 +84,7 @@ public class Database : IDatabase
         this.LogFiles = new(this, fileMill, new("Log",databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any() ? databaseOptions.LogFiles
             : new[]
             {
-                new FileOptions(this.Name + " Log", this.Name + ".ldf")
+                new Files.FileOptions(this.Name + " Log", this.Name + ".ldf")
                 {
                     Extents = Math.Max(
                         this.FileGroups.Sum(fg => fg.DataFiles.OfType<IManagedFile>().Sum(df => df.InitialSize)), 8)

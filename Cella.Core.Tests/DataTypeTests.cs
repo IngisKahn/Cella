@@ -1,6 +1,6 @@
 ﻿namespace Cella.Core.Tests;
 
-using DataTypes;
+using Storage.DataTypes;
 using Xunit;
 
 public class DataTypeTests

@@ -3,14 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cella.Core", "Cella.Core\Cella.Core.csproj", "{A0E2ABF5-5CCB-4E3D-9262-66BC1EFC2319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cella.Core", "Cella.Core\Cella.Core.csproj", "{A0E2ABF5-5CCB-4E3D-9262-66BC1EFC2319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cella.Core.Tests", "Cella.Core.Tests\Cella.Core.Tests.csproj", "{8DEC674E-BB5A-4A20-825C-A52587221098}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cella.Core.Tests", "Cella.Core.Tests\Cella.Core.Tests.csproj", "{8DEC674E-BB5A-4A20-825C-A52587221098}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{77FD00D1-9734-498E-B148-8DFEC825905B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cella.Storage", "Cella.Storage\Cella.Storage.csproj", "{11B2EF31-1C9E-4310-96B1-5DA3D3AECBBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{8DEC674E-BB5A-4A20-825C-A52587221098}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DEC674E-BB5A-4A20-825C-A52587221098}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DEC674E-BB5A-4A20-825C-A52587221098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11B2EF31-1C9E-4310-96B1-5DA3D3AECBBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11B2EF31-1C9E-4310-96B1-5DA3D3AECBBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11B2EF31-1C9E-4310-96B1-5DA3D3AECBBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11B2EF31-1C9E-4310-96B1-5DA3D3AECBBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

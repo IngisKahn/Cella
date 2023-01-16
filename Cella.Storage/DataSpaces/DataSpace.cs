@@ -1,4 +1,4 @@
-﻿namespace Cella.Core.DataSpaces;
+﻿namespace Cella.Storage.DataSpaces;
 
 public enum DataSpaceType
 {

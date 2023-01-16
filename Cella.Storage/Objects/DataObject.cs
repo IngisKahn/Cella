@@ -1,4 +1,4 @@
-﻿namespace Cella.Core.Objects;
+﻿namespace Cella.Storage.Objects;
 
 using System.ComponentModel.DataAnnotations;
 

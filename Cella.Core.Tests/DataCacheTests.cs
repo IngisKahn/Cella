@@ -1,7 +1,7 @@
 ﻿namespace Cella.Core.Tests
 {
     using System.Threading.Tasks;
-    using Cella.Core.Pages;
+    using Storage.Pages;
     using Xunit;
 
     public class DataCacheTests
