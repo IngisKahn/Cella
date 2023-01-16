@@ -1,12 +1,5 @@
 ﻿namespace Cella.Storage.DataSpaces;
 
-public enum DataSpaceType
-{
-    FileGroup,
-    FileStreamDataFileGroup,
-    MemoryOptimizedTablesFileGroup,
-    PartitionScheme
-}
 public abstract class DataSpace
 {
     protected DataSpace(int id, string name, DataSpaceType type)

@@ -1,6 +1,5 @@
 ﻿namespace Cella.Storage.DataTypes;
 
-using System.Runtime.InteropServices;
 using System.Text;
 
 public abstract class DataType<T>
@@ -57,55 +56,3 @@ public abstract class DataType<T>
 }
 
 //
-public class StringDataType : DataType<string>
-{
-    public int Read(ReadOnlySpan<byte> data, out string value)
-    {
-        var length = MemoryMarshal.Read<ushort>(data);
-        value = Encoding.UTF8.GetString(data[2..]);
-        return length;
-    }
-
-    public int Write(Span<byte> data, string value)
-    {
-        var (bytes, _) = DataType<string>.ConvertString(this.MaxLength - 2, value);
-
-        var byteCountField = (ushort)bytes.Length;
-        MemoryMarshal.Write(data, ref byteCountField);
-        bytes.CopyTo(data[2..]);
-        return byteCountField;
-    }
-
-    public override int MaxLength { get; }
-}
-
-public abstract class FixedDataType<T> : DataType<T>
-{
-    public override int MaxLength { get; }
-    protected FixedDataType(int length) => this.MaxLength = length;
-    public abstract T Read(ReadOnlySpan<byte> data);
-    public abstract void Write(Span<byte> data, ref T value);
-}
-
-public unsafe class IntrinsicDataType<T> : FixedDataType<T> where T : unmanaged
-{
-    public IntrinsicDataType() : base(sizeof(T)) { }
-
-    public override T Read(ReadOnlySpan<byte> data) => MemoryMarshal.Read<T>(data);
-
-    public override void Write(Span<byte> data, ref T value) => MemoryMarshal.Write(data, ref value);
-}
-
-public class FixedStringDataType : FixedDataType<string>
-{
-    public FixedStringDataType(int length) : base(length) { }
-
-    public override string Read(ReadOnlySpan<byte> data) => Encoding.UTF8.GetString(data);
-
-    public override void Write(Span<byte> data, ref string value)
-    {
-        var (bytes, _) = DataType<string>.ConvertString(this.MaxLength, value);
-        
-        bytes.CopyTo(data);
-    }
-}

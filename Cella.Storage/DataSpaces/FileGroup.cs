@@ -2,15 +2,6 @@
 
 using Files;
 
-public abstract class BaseFileGroup : DataSpace
-{
-    public Guid Guid { get; init; }
-    public bool IsReadOnly { get; set; }
-    public bool AutoGrowAllFiles { get; set; }
-
-    protected BaseFileGroup(int id, string name, DataSpaceType type) : base(id, name, type) { }
-}
-
 public class FileGroup : BaseFileGroup
 {
     protected IFileMill FileMill { get; }

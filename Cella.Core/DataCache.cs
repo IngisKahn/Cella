@@ -322,10 +322,3 @@ public sealed class DataCache : IAsyncDisposable
         }
     }
 }
-
-public interface IPage
-{
-    bool IsDirty { get; }
-    FullPageId FullPageId { get; }
-    Task FlushAsync();
-}

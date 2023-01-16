@@ -18,17 +18,3 @@ public record DatabaseOptions(string Name)
     public IEnumerable<FileGroupOptions>? FileGroups { get; init; }
     public IEnumerable<FileOptions>? LogFiles { get; init; }
 }
-
-public enum RecoveryMode
-{
-    Full,
-    BulkLogged,
-    Simple
-}
-
-public enum PageVerifyMode
-{
-    None,
-    TornPageDetection,
-    Checksum
-}

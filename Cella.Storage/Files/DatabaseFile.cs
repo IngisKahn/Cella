@@ -3,43 +3,6 @@
 using Core;
 using DataSpaces;
 
-public enum AutoGrowthType
-{
-    ByPercent,
-    ByExtent
-}
-
-public enum DatabaseFileType
-{
-    Pages,
-    Log,
-    FileStream,
-    Fixed
-}
-
-public enum DatabaseFileState
-{
-    Online,
-    Restoring,
-    Recovering,
-    RecoveryPending,
-    Suspect,
-    Offline,
-    Defunct
-}
-
-public enum PageSize : byte
-{
-    Kb1,
-    Kb2,
-    Kb4,
-    Kb8,
-    Kb16,
-    Kb32,
-    Kb64,
-    Default = Kb8
-}
-
 public abstract class DatabaseFile : IDatabaseFile
 {
     public ushort Id { get; }
