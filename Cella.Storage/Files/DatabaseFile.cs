@@ -5,7 +5,7 @@ using DataSpaces;
 
 public abstract class DatabaseFile : IDatabaseFile
 {
-    public ushort Id { get; }
+    public FileId Id { get; }
     public Guid Guid { get; }
     public string Name { get; }
     public string PhysicalName { get; }
@@ -22,9 +22,9 @@ public abstract class DatabaseFile : IDatabaseFile
     public bool IsSparse { get; init; }
     public bool IsNameReserved { get; set; }
 
-    public DatabaseFile(DataSpace dataSpace, ushort id, string name, string physicalName, DatabaseFileType type)
+    public DatabaseFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type)
         : this(dataSpace, id, name, physicalName, type, Guid.NewGuid()) { }
-    public DatabaseFile(DataSpace dataSpace, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
+    public DatabaseFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
     {
         this.DataSpace = dataSpace;
         this.Id = id;

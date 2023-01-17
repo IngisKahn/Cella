@@ -9,6 +9,8 @@ using FileOptions = System.IO.FileOptions;
 
 public class Database : IDatabase
 {
+    public const string ModelDbName = "model";
+
     private readonly IFileMill fileMill;
     public List<DataObject> Objects { get; set; } = new();
     // Indexes
@@ -92,4 +94,24 @@ public class Database : IDatabase
             }), 0);
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fg => fg.IsDefault) ?? this.PrimaryFileGroup;
     }
+}
+
+public interface IMasterDatabase : IDatabase
+{
+    string ServerName { get; }
+    Guid ServerGuid { get; }
+    IEnumerable<IDatabase> Databases { get; }
+}
+
+public class MasterDatabase : Database, IMasterDatabase
+{
+    public const string MasterDbName = "master";
+
+    public MasterDatabase(IFileMill fileMill, DatabaseOptions databaseOptions) : base(fileMill, databaseOptions)
+    {
+    }
+
+    public string ServerName { get; } = "SERVER_NAME";
+    public Guid ServerGuid { get; } = Guid.NewGuid();
+    public IEnumerable<IDatabase> Databases { get; } = new List<IDatabase>();
 }

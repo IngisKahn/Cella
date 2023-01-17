@@ -1,13 +1,20 @@
 ﻿namespace Cella.Storage.Files
 {
     using System;
+    using Core;
     using DataSpaces;
 
     public interface IDatabaseFile
     {
         DataSpace DataSpace { get; }
+        /// <summary>
+        /// Globally unique identifier (GUID) for the file. 
+        /// </summary>
         Guid Guid { get; }
-        ushort Id { get; }
+        /// <summary>
+        /// The file identification number (unique for each database). 
+        /// </summary>
+        FileId Id { get; }
         bool IsMediaReadOnly { get; init; }
         bool IsNameReserved { get; set; }
         bool IsReadOnly { get; set; }

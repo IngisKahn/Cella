@@ -15,16 +15,16 @@ namespace Cella.Core.Tests
             public IDatabaseFile Create(FileGroup fileGroup, FileOptions options) => options.Type switch
             {
                 DatabaseFileType.FileStream => throw new NotImplementedException(),
-                _ => new MockManagedFile(fileGroup, 0, options.Name, options.PhysicalName, options.Type)
+                _ => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type)
             };
 
-            public IManagedFile CreateManaged(FileGroup fileGroup, FileOptions options) => new MockManagedFile(fileGroup, 0, options.Name, options.PhysicalName, options.Type);
+            public IManagedFile CreateManaged(FileGroup fileGroup, FileOptions options) => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type);
 
             public class MockDatabaseFile : IDatabaseFile
             {
                 public DataSpace DataSpace { get; }
                 public Guid Guid { get; }
-                public ushort Id { get; }
+                public FileId Id { get; }
                 public bool IsMediaReadOnly { get; init; }
                 public bool IsNameReserved { get; set; }
                 public bool IsReadOnly { get; set; }
@@ -40,9 +40,9 @@ namespace Cella.Core.Tests
                 public decimal DifferentialBaseLsn { get; set; }
 
 
-                public MockDatabaseFile(DataSpace fileGroup, ushort id, string name, string physicalName, DatabaseFileType type)
+                public MockDatabaseFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type)
                     : this(fileGroup, id, name, physicalName, type, Guid.NewGuid()) { }
-                public MockDatabaseFile(DataSpace fileGroup, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
+                public MockDatabaseFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
                 {
                     this.DataSpace = fileGroup;
                     this.Id = id;
@@ -63,12 +63,12 @@ namespace Cella.Core.Tests
 
             public class MockManagedFile : MockDatabaseFile, IManagedFile
             {
-                public MockManagedFile(DataSpace fileGroup, ushort id, string name, string physicalName, DatabaseFileType type)
+                public MockManagedFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type)
                     : base(fileGroup, id, name, physicalName, type)
                 {
                 }
 
-                public MockManagedFile(DataSpace fileGroup, ushort id, string name, string physicalName, DatabaseFileType type, Guid guid)
+                public MockManagedFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
                     : base(fileGroup, id, name, physicalName, type, guid)
                 {
                 }

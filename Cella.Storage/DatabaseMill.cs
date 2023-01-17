@@ -19,4 +19,8 @@ public class DatabaseMill : IDatabaseMill
             database.Add(dataObject);
         return database;
     }
+
+    public IDatabase Load(string primaryDbPath) => throw new NotImplementedException();
+
+    public IMasterDatabase LoadMaster(string masterDbPath) => throw new NotImplementedException();
 }

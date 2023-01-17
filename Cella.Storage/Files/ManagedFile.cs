@@ -7,12 +7,12 @@ public abstract class ManagedFile : DatabaseFile, IAsyncDisposable, IManagedFile
 {
     private FileStream? fileStream;
 
-    protected ManagedFile(DataSpace dataSpace, ushort id, string name, string physicalName, DatabaseFileType type)
+    protected ManagedFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type)
         : base(dataSpace, id, name, physicalName, type)
     {
     }
 
-    protected ManagedFile(DataSpace dataSpace, ushort id, string name, string physicalName, Guid guid, DatabaseFileType type)
+    protected ManagedFile(DataSpace dataSpace, FileId id, string name, string physicalName, Guid guid, DatabaseFileType type)
         : base(dataSpace, id, name, physicalName, type, guid)
     {
     }
