@@ -5,21 +5,21 @@ using Core;
 
 public class Server
 {
-    private readonly Dictionary<string, IDatabase> databases = new();
-    private readonly IDatabaseMill databaseMill;
+    private readonly Dictionary<string, Database> databases = new();
+    private readonly DatabaseMill databaseMill;
 
     public string Name { get; }
     public string Location { get; }
     public Guid Guid { get; }
 
-    public Server(IDatabaseMill databaseMill, string name, string location, Guid guid)
+    public Server(DatabaseMill databaseMill, string name, string location, Guid guid)
     {
         this.databaseMill = databaseMill;
         this.Name = name;
         this.Location = location;
         this.Guid = guid;
         // create model
-        var model = this.CreateEmptyDatabase(new(Database.ModelDbName) {});
+        var model = this.CreateEmptyDatabase(new(Database.ModelDbName));
         this.databases.Add(Database.ModelDbName, model);
         // populate model
         // copy to master
@@ -27,7 +27,7 @@ public class Server
         // populate master
     }
 
-    public Server(IDatabaseMill databaseMill, string masterDbPath)
+    public Server(DatabaseMill databaseMill, string masterDbPath)
     {
         this.databaseMill = databaseMill;
         var location = Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath));
@@ -40,15 +40,16 @@ public class Server
             this.databases.Add(db.Name, db);
     }
 
-    public IDatabase CreateEmptyDatabase(DatabaseOptions databaseOptions)
+    public Database CreateEmptyDatabase(DatabaseOptions databaseOptions)
     {
         var database = this.databaseMill.Create(databaseOptions);
         this.databases.Add(database.Name, database);
         return database;
     }
 
-    public IDatabase CreateDatabase(DatabaseOptions databaseOptions)
+    public Database CreateDatabase(DatabaseOptions databaseOptions)
     {
+        // requires role sysadmin || server access CONTROL or ALTER || permission CREATE DATABASE
         var database = this.databaseMill.Create(databaseOptions, this.databases[Database.ModelDbName]);
         this.databases.Add(database.Name, database);
         // add to master

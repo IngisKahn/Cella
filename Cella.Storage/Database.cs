@@ -7,11 +7,11 @@ using Files;
 using Objects;
 using FileOptions = System.IO.FileOptions;
 
-public class Database : IDatabase
+public class Database
 {
     public const string ModelDbName = "model";
 
-    private readonly IFileMill fileMill;
+    private readonly FileMill fileMill;
     public List<DataObject> Objects { get; set; } = new();
     // Indexes
     // Columns
@@ -66,12 +66,14 @@ public class Database : IDatabase
     public bool IsReadOnly { get; set; }
     public bool IsAutoClose { get; set; }
     public FileGroup DefaultFileGroup { get; set; }
+    public DatabaseOptions Options { get; }
 
-    public Database(IFileMill fileMill, DatabaseOptions databaseOptions)
+    public Database(FileMill fileMill, DatabaseOptions databaseOptions)
     {
         this.fileMill = fileMill;
+        this.Options = databaseOptions;
         this.Name = databaseOptions.Name;
-        this.UserAccess = databaseOptions.UserAccess;
+        this.UserAccess = databaseOptions.UserAccess ?? DatabaseUserAccess.Multi;
         this.PrimaryFileGroup = new(this, fileMill, databaseOptions.PrimaryFiles);
 
         var fileGroups =
@@ -89,29 +91,9 @@ public class Database : IDatabase
                 new Files.FileOptions(this.Name + " Log", this.Name + ".ldf")
                 {
                     Extents = Math.Max(
-                        this.FileGroups.Sum(fg => fg.DataFiles.OfType<IManagedFile>().Sum(df => df.InitialSize)), 8)
+                        this.FileGroups.Sum(fg => fg.DataFiles.OfType<ManagedFile>().Sum(df => df.InitialSize)), 8)
                 }
             }), 0);
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fg => fg.IsDefault) ?? this.PrimaryFileGroup;
     }
-}
-
-public interface IMasterDatabase : IDatabase
-{
-    string ServerName { get; }
-    Guid ServerGuid { get; }
-    IEnumerable<IDatabase> Databases { get; }
-}
-
-public class MasterDatabase : Database, IMasterDatabase
-{
-    public const string MasterDbName = "master";
-
-    public MasterDatabase(IFileMill fileMill, DatabaseOptions databaseOptions) : base(fileMill, databaseOptions)
-    {
-    }
-
-    public string ServerName { get; } = "SERVER_NAME";
-    public Guid ServerGuid { get; } = Guid.NewGuid();
-    public IEnumerable<IDatabase> Databases { get; } = new List<IDatabase>();
 }

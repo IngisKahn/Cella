@@ -2,25 +2,25 @@
 
 using Files;
 
-public class DatabaseMill : IDatabaseMill
+public class DatabaseMill
 {
-    private readonly IFileMill fileMill;
-    public DatabaseMill(IFileMill fileMill)
+    private readonly FileMill fileMill;
+    public DatabaseMill(FileMill fileMill)
     {
         ArgumentNullException.ThrowIfNull(fileMill);
         this.fileMill = fileMill;
     }
-    public IDatabase Create(DatabaseOptions databaseOptions) => new Database(fileMill, databaseOptions);
+    public Database Create(DatabaseOptions databaseOptions) => new Database(fileMill, databaseOptions);
 
-    public IDatabase Create(DatabaseOptions databaseOptions, IDatabase model)
+    public Database Create(DatabaseOptions databaseOptions, Database model)
     {
-        var database = new Database(fileMill, databaseOptions) {};
+        var database = new Database(fileMill, databaseOptions.ApplyDefaults(model.Options)) {};
         foreach (var dataObject in model.DataObjects)
             database.Add(dataObject);
         return database;
     }
 
-    public IDatabase Load(string primaryDbPath) => throw new NotImplementedException();
+    public Database Load(string primaryDbPath) => throw new NotImplementedException();
 
-    public IMasterDatabase LoadMaster(string masterDbPath) => throw new NotImplementedException();
+    public MasterDatabase LoadMaster(string masterDbPath) => throw new NotImplementedException();
 }

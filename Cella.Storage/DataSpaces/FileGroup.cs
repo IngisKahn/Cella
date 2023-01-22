@@ -4,17 +4,17 @@ using Files;
 
 public class FileGroup : BaseFileGroup
 {
-    protected IFileMill FileMill { get; }
-    public List<IDatabaseFile> DataFiles { get; } = new();
-    public IDatabase Database { get; }
-    public FileGroup(IDatabase database, IFileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
+    protected FileMill FileMill { get; }
+    public List<DatabaseFile> DataFiles { get; } = new();
+    public Database Database { get; }
+    public FileGroup(Database database, FileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;
         this.Database = database;
         this.IsDefault = options.IsDefault;
         this.DataFiles.AddRange(options.FileOptions.Select(fo => fileMill.Create(this, fo)));
     }
-    protected FileGroup(IDatabase database, IFileMill fileMill, string name, int id) : base(id, name, DataSpaceType.FileGroup)
+    protected FileGroup(Database database, FileMill fileMill, string name, int id) : base(id, name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;
         this.Database = database;

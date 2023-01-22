@@ -18,5 +18,5 @@ public abstract class DataObject
     public bool IsInternal { get; }
     public bool IsPublished { get; }
     public bool IsSchemaPublished { get; }
-    public void CopyTo(IDatabase database) => throw new NotImplementedException();
+    public void CopyTo(Database database) => throw new NotImplementedException();
 }

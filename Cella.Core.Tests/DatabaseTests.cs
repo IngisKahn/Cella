@@ -10,66 +10,19 @@ namespace Cella.Core.Tests
 
     public class DatabaseTests
     {
-        public class MockFileMill : IFileMill
+        public class MockFileMill : FileMill
         {
-            public IDatabaseFile Create(FileGroup fileGroup, FileOptions options) => options.Type switch
+            public DatabaseFile Create(FileGroup fileGroup, FileOptions options) => options.Type switch
             {
                 DatabaseFileType.FileStream => throw new NotImplementedException(),
                 _ => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type)
             };
 
-            public IManagedFile CreateManaged(FileGroup fileGroup, FileOptions options) => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type);
-
-            public class MockDatabaseFile : IDatabaseFile
-            {
-                public DataSpace DataSpace { get; }
-                public Guid Guid { get; }
-                public FileId Id { get; }
-                public bool IsMediaReadOnly { get; init; }
-                public bool IsNameReserved { get; set; }
-                public bool IsReadOnly { get; set; }
-                public bool IsSparse { get; init; }
-                public string Name { get; }
-                public string PhysicalName { get; }
-                public DatabaseFileState State { get; set; }
-                public DatabaseFileType Type { get; }
-                public decimal CreateLsn { get; set; }
-                public decimal DropLsn { get; set; }
-                public decimal ReadOnlyLsn { get; set; }
-                public decimal ReadWriteLsn { get; set; }
-                public decimal DifferentialBaseLsn { get; set; }
-
-
-                public MockDatabaseFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type)
-                    : this(fileGroup, id, name, physicalName, type, Guid.NewGuid()) { }
-                public MockDatabaseFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
-                {
-                    this.DataSpace = fileGroup;
-                    this.Id = id;
-                    this.Name = name;
-                    this.PhysicalName = physicalName;
-                    this.Guid = guid;
-                    this.Type = type;
-                }
-
-                public void Create()
-                {
-                }
-
-                public void Validate()
-                {
-                }
-            }
-
-            public class MockManagedFile : MockDatabaseFile, IManagedFile
+            public ManagedFile CreateManaged(FileGroup fileGroup, FileOptions options) => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type);
+            public class MockManagedFile : ManagedFile
             {
                 public MockManagedFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type)
                     : base(fileGroup, id, name, physicalName, type)
-                {
-                }
-
-                public MockManagedFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
-                    : base(fileGroup, id, name, physicalName, type, guid)
                 {
                 }
 

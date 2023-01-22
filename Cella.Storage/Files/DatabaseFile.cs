@@ -3,7 +3,7 @@
 using Core;
 using DataSpaces;
 
-public abstract class DatabaseFile : IDatabaseFile
+public abstract class DatabaseFile
 {
     public FileId Id { get; }
     public Guid Guid { get; }

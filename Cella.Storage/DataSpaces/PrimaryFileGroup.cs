@@ -4,9 +4,9 @@ using Files;
 
 public class PrimaryFileGroup : FileGroup
 {
-    public IManagedFile PrimaryFile { get; }
+    public ManagedFile PrimaryFile { get; }
 
-    public PrimaryFileGroup(IDatabase database, IFileMill fileMill, IEnumerable<FileOptions>? fileOptions)
+    public PrimaryFileGroup(Database database, FileMill fileMill, IEnumerable<FileOptions>? fileOptions)
         : base(database, fileMill, "primary", 1)
     {
         var fileOptionsEnumerable = fileOptions as FileOptions[] ?? (fileOptions ?? Array.Empty<FileOptions>()).ToArray();
@@ -18,12 +18,12 @@ public class PrimaryFileGroup : FileGroup
         else
         {
             var dataFiles = fileOptionsEnumerable.Select(o => this.FileMill.Create(this, o)).ToArray();
-            this.PrimaryFile = (IManagedFile)dataFiles[0];
+            this.PrimaryFile = (ManagedFile)dataFiles[0];
             this.DataFiles.AddRange(dataFiles);
         }
     }
 
-    public PrimaryFileGroup(IDatabase database, IFileMill fileMill, IManagedFile primaryFile)
+    public PrimaryFileGroup(Database database, FileMill fileMill, ManagedFile primaryFile)
         : base(database, fileMill, "primary", 1)
     {
         if (primaryFile.Type != DatabaseFileType.Pages)
