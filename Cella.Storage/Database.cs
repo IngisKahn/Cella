@@ -9,8 +9,6 @@ using FileOptions = System.IO.FileOptions;
 
 public class Database
 {
-    public const string ModelDbName = "model";
-
     private readonly FileMill fileMill;
     public List<DataObject> Objects { get; set; } = new();
     // Indexes
@@ -49,22 +47,16 @@ public class Database
     public bool IsCleanlyShutdown { get; }
     public bool IsSupplementalLoggingEnabled { get; }
     public SnapshotIsolationState SnapshotIsolationState { get; }
-    public bool IsReadCommittedSnapshotOn { get; }
-    public RecoveryMode RecoveryMode { get; }
-    public PageVerifyMode PageVerifyMode { get; }
-    public bool IsAutoCreateStatsOn { get; }
     public bool IsAutoCreateStatsIncrementalOn { get; }
     public CultureInfo DefaultCultureInfo { get; } = CultureInfo.InstalledUICulture;
     public CultureInfo DefaultFullTextCultureInfo { get; } = CultureInfo.InstalledUICulture;
     public bool IsTransformNoiseWordsOn { get; }
-    public int TargetRecoveryTimeInSeconds { get; }
     public DelayedDurability DelayedDurability { get; }
     public bool IsMemoryOptimizedElevateToSnapshotOn { get; }
     public bool IsMixedPageAllocationOn { get; }
     public bool IsTemporalHistoryRetentionEnabled { get; }
     public bool IsAcceleratedDatabaseRecoveryOn { get; }
     public bool IsReadOnly { get; set; }
-    public bool IsAutoClose { get; set; }
     public FileGroup DefaultFileGroup { get; set; }
     public DatabaseOptions Options { get; }
 
@@ -88,12 +80,21 @@ public class Database
         this.LogFiles = new(this, fileMill, new("Log",databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any() ? databaseOptions.LogFiles
             : new[]
             {
-                new Files.FileOptions(this.Name + " Log", this.Name + ".ldf")
+                new Files.ManagedFileOptions(this.Name + " Log", this.Name + ".ldf")
                 {
                     Extents = Math.Max(
                         this.FileGroups.Sum(fg => fg.DataFiles.OfType<ManagedFile>().Sum(df => df.InitialSize)), 8)
                 }
             }), 0);
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fg => fg.IsDefault) ?? this.PrimaryFileGroup;
+    }
+    public virtual async Task CreateAsync(ModelDatabase model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual async Task LoadAsync()
+    {
+        throw new NotImplementedException();
     }
 }

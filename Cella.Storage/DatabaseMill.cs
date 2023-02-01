@@ -10,17 +10,18 @@ public class DatabaseMill
         ArgumentNullException.ThrowIfNull(fileMill);
         this.fileMill = fileMill;
     }
-    public Database Create(DatabaseOptions databaseOptions) => new Database(fileMill, databaseOptions);
+    // requires role sysadmin || server access CONTROL or ALTER || permission CREATE DATABASE
+    public Task<ModelDatabase> CreateModelAsync(string location, DatabaseOptions databaseOptions) => throw new NotImplementedException();
+    public Task<MasterDatabase> CreateMasterAsync(ModelDatabase model, string location, DatabaseOptions databaseOptions) => throw new NotImplementedException();
 
-    public Database Create(DatabaseOptions databaseOptions, Database model)
+    public async Task<Database> Create(DatabaseOptions databaseOptions, ModelDatabase model)
     {
-        var database = new Database(fileMill, databaseOptions.ApplyDefaults(model.Options)) {};
-        foreach (var dataObject in model.DataObjects)
-            database.Add(dataObject);
+        var database = new Database(fileMill, databaseOptions.ApplyDefaults(model.Options));
+        await database.CreateAsync(model);
         return database;
     }
 
-    public Database Load(string primaryDbPath) => throw new NotImplementedException();
+    public Task<Database> LoadAsync(string primaryDbPath) => throw new NotImplementedException();
 
-    public MasterDatabase LoadMaster(string masterDbPath) => throw new NotImplementedException();
+    public Task<MasterDatabase> LoadMasterAsync(string masterDbPath) => throw new NotImplementedException();
 }

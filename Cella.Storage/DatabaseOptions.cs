@@ -1,6 +1,7 @@
 ﻿namespace Cella.Storage;
 
 using DataSpaces;
+using Files;
 using FileOptions = Files.FileOptions;
 
 public record DatabaseOptions(string Name)
@@ -33,5 +34,20 @@ public record DatabaseOptions(string Name)
             PrimaryFiles = this.PrimaryFiles ?? defaults.PrimaryFiles,
             FileGroups = this.FileGroups ?? defaults.FileGroups,
             LogFiles = this.LogFiles ?? defaults.LogFiles,
+        };
+    public static DatabaseOptions Defaults(string name) =>
+        new(name)
+        {
+            UserAccess = DatabaseUserAccess.Multi,
+            IsAutoClose = false,
+            IsAutoCreateStatistics = true,
+            IsAutoUpdateStatistics = true,
+            Recovery = RecoveryMode.Full,
+            PageVerify = PageVerifyMode.None,
+            TargetRecoverySeconds = 0,
+            AllowSnapshotIsolation = true,
+            ReadUncommittedSnapshot = false,
+            PrimaryFiles = new[] { new ManagedFileOptions(name,  name + ".mdf") },
+            LogFiles = new [] { new ManagedFileOptions(name + "_log", name + ".ldf", DatabaseFileType.Log) },
         };
 }

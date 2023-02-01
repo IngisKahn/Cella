@@ -11,7 +11,7 @@ public class ServerMill
     }
 
     // requires role sysadmin || server access CONTROL or ALTER || permission CREATE DATABASE
-    public Server CreateNew(string name, string location) => new(this.databaseMill, name, location, Guid.NewGuid());
+    public Task<Server> CreateAsync(ServerOptions serverOptions) => Server.CreateAsync(this.databaseMill, serverOptions);
 
-    public Server Load(string masterDbPath) => new(this.databaseMill, masterDbPath);
+    public Task<Server> LoadAsync(string masterDbPath) => Server.LoadAsync(this.databaseMill, masterDbPath);
 }

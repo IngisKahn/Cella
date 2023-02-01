@@ -7,8 +7,8 @@ public enum PageType : byte
     MixedData,
     MixedTree,
     // _
-    // _
-    Sort = 7, 
+    WorkFile = 6,
+    Sort, 
     GlobalAllocationMap,
     SharedGlobalAllocationMap,
     IndexAllocationMap,

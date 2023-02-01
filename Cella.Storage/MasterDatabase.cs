@@ -5,12 +5,14 @@ using Files;
 public class MasterDatabase : Database
 {
     public const string MasterDbName = "master";
+    public ModelDatabase Model { get; }
 
-    public MasterDatabase(FileMill fileMill, DatabaseOptions databaseOptions) : base(fileMill, databaseOptions)
+    public MasterDatabase(FileMill fileMill, Server server, ModelDatabase model) : base(fileMill, new(MasterDatabase.MasterDbName))
     {
+        this.Model = model;
     }
-
-    public string ServerName { get; } = "SERVER_NAME";
+    public ServerOptions ServerOptions { get; set; }
     public Guid ServerGuid { get; } = Guid.NewGuid();
     public IEnumerable<Database> Databases { get; } = new List<Database>();
+
 }

@@ -1,58 +1,68 @@
 ﻿namespace Cella.Storage;
 
-using System.Security.Principal;
+using System;
+using System.Runtime.CompilerServices;
 using Core;
 
 public class Server
 {
     private readonly Dictionary<string, Database> databases = new();
     private readonly DatabaseMill databaseMill;
+    private readonly string location;
 
-    public string Name { get; }
-    public string Location { get; }
-    public Guid Guid { get; }
+    public ServerOptions Options { get; private init; } = null!;
+    public Guid Guid { get; private init; } 
 
-    public Server(DatabaseMill databaseMill, string name, string location, Guid guid)
+    public required ModelDatabase Model { private get; init; }
+    public required MasterDatabase Master { private get; init; }
+
+    private Server(DatabaseMill databaseMill, ServerOptions serverOptions)
     {
         this.databaseMill = databaseMill;
-        this.Name = name;
-        this.Location = location;
-        this.Guid = guid;
-        // create model
-        var model = this.CreateEmptyDatabase(new(Database.ModelDbName));
-        this.databases.Add(Database.ModelDbName, model);
-        // populate model
-        // copy to master
-        var master = this.CreateDatabase(new(MasterDatabase.MasterDbName));
-        // populate master
+        this.Options = serverOptions;
+        this.location = serverOptions.Location;
+        this.Guid = Guid.NewGuid();
     }
 
-    public Server(DatabaseMill databaseMill, string masterDbPath)
+    private Server(DatabaseMill databaseMill, string masterDbPath)
     {
         this.databaseMill = databaseMill;
-        var location = Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath));
-        this.Location = location;
-        var master = this.databaseMill.LoadMaster(masterDbPath);
-        this.Name = master.ServerName;
-        this.Guid = master.ServerGuid;
-        this.databases.Add(MasterDatabase.MasterDbName, master);
-        foreach (var db in master.Databases)
-            this.databases.Add(db.Name, db);
+        this.location = Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath));
     }
 
-    public Database CreateEmptyDatabase(DatabaseOptions databaseOptions)
+    internal static async Task<Server> CreateAsync(DatabaseMill databaseMill, ServerOptions serverOptions)
     {
-        var database = this.databaseMill.Create(databaseOptions);
-        this.databases.Add(database.Name, database);
-        return database;
+        var model = await databaseMill.CreateModelAsync(serverOptions.Location, serverOptions.ModelDatabaseOptions);
+        Server server = new(databaseMill, serverOptions)
+        {
+            Model = model,
+            Master = await databaseMill.CreateMasterAsync(model, serverOptions.Location, serverOptions.MasterDatabaseOptions)
+        };
+        return server;
     }
 
-    public Database CreateDatabase(DatabaseOptions databaseOptions)
+    public static async Task<Server> LoadAsync(DatabaseMill databaseMill, string masterDbPath)
     {
-        // requires role sysadmin || server access CONTROL or ALTER || permission CREATE DATABASE
-        var database = this.databaseMill.Create(databaseOptions, this.databases[Database.ModelDbName]);
-        this.databases.Add(database.Name, database);
-        // add to master
-        return database;
+        var master = await databaseMill.LoadMasterAsync(masterDbPath);
+
+        // get server options
+        var options = master.ServerOptions;
+
+        // load model
+        var model = master.Model;
+        // load online dbs
+
+
+        Server server = new(databaseMill, masterDbPath)
+        {
+            Master = master,
+            Model = new(null),
+
+            Options = new("","",0)
+        };
+        return server;
     }
+
+    public Task AttachAsync(Database database) => throw new NotImplementedException();
+    public Task DetachAsync(DatabaseId databaseId) => throw new NotImplementedException();
 }
