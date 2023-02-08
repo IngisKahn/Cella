@@ -11,7 +11,7 @@ public enum PageType : byte
     Sort, 
     GlobalAllocationMap,
     SharedGlobalAllocationMap,
-    IndexAllocationMap,
+    AllocationUnitMap,
     PageFreeSpace,
     // _
     Boot = 13,

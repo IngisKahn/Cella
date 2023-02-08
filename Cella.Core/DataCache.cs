@@ -155,7 +155,7 @@ public sealed class DataCache : IAsyncDisposable
         return node;
     }
 
-    public async ValueTask<IPage> GetPageAsync(FullPageId pageId, Func<IPage> loader)
+    public async ValueTask<IPage> GetPageAsync(FullPageId pageId, Func<BufferPool.Buffer, IPage> loader)
     {
         var ticks = Environment.TickCount64;
         var gotIt = false;
@@ -179,7 +179,7 @@ public sealed class DataCache : IAsyncDisposable
         while (!this.freeBuffers.TryDequeue(out buffer)) // learn from this
             await Task.Delay(this.options.LazyWriterInterval); 
 
-        slot = new(buffer, loader(), ticks, this.generationFlag) { WriteLock = 1 };
+        slot = new(buffer, loader(buffer), ticks, this.generationFlag) { WriteLock = 1 };
 
 
 

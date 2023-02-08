@@ -28,8 +28,8 @@
             await using DataCache dc = new(bp, DataCacheTests.options);
             MockPage mp = new();
             FullPageId id = new();
-            await dc.GetPageAsync(id, () => mp);
-            Assert.Equal(mp, await dc.GetPageAsync(id, () => new MockPage()));
+            await dc.GetPageAsync(id, _ => mp);
+            Assert.Equal(mp, await dc.GetPageAsync(id, _ => new MockPage()));
         }
     }
 }

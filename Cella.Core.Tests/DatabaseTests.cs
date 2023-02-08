@@ -82,5 +82,15 @@ namespace Cella.Core.Tests
             Assert.Equal("OrderEntryDb_log", db.LogFiles.DataFiles.Single().Name);
             Assert.Equal("l:\\OrderEntryDb_log.ldf", db.LogFiles.DataFiles.Single().PhysicalName);
         }
+
+        [Fact]
+        public void PrimaryAndLogFilesDefault()
+        {
+            MockFileMill fm = new();
+            Database db = new(fm, new("PrimaryAndLogFilesDefault"));
+            Assert.Single(db.PrimaryFileGroup.DataFiles);
+            Assert.Single(db.FileGroups);
+            Assert.Single(db.LogFiles.DataFiles);
+        }
     }
 }
