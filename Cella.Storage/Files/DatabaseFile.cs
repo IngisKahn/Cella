@@ -15,18 +15,18 @@ public abstract class DatabaseFile
     public decimal ReadOnlyLsn { get; set; }
     public decimal ReadWriteLsn { get; set; }
     public decimal DifferentialBaseLsn { get; set; }
-    public DataSpace DataSpace { get; }
+    //public DataSpace DataSpace { get; }
     public DatabaseFileState State { get; set; } = DatabaseFileState.Offline;
     public bool IsMediaReadOnly { get; init; }
     public bool IsReadOnly { get; set; }
     public bool IsSparse { get; init; }
     public bool IsNameReserved { get; set; }
 
-    public DatabaseFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type)
-        : this(dataSpace, id, name, physicalName, type, Guid.NewGuid()) { }
-    public DatabaseFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
+    public DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type)
+        : this(id, name, physicalName, type, Guid.NewGuid()) { }
+    public DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
     {
-        this.DataSpace = dataSpace;
+        //this.DataSpace = dataSpace;
         this.Id = id;
         this.Name = name;
         this.PhysicalName = physicalName;

@@ -12,17 +12,17 @@ namespace Cella.Core.Tests
     {
         public class MockFileMill : FileMill
         {
-            public DatabaseFile Create(FileGroup fileGroup, FileOptions options) => options.Type switch
+            public DatabaseFile Create(FileId fileId, FileOptions options) => options.Type switch
             {
                 DatabaseFileType.FileStream => throw new NotImplementedException(),
-                _ => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type)
+                _ => new MockManagedFile(fileId, options.Name, options.PhysicalName, options.Type)
             };
 
-            public ManagedFile CreateManaged(FileGroup fileGroup, FileOptions options) => new MockManagedFile(fileGroup, new(), options.Name, options.PhysicalName, options.Type);
+            public ManagedFile CreateManaged(FileId fileId, FileOptions options) => new MockManagedFile(fileId, options.Name, options.PhysicalName, options.Type);
             public class MockManagedFile : ManagedFile
             {
-                public MockManagedFile(DataSpace fileGroup, FileId id, string name, string physicalName, DatabaseFileType type)
-                    : base(fileGroup, id, name, physicalName, type)
+                public MockManagedFile(FileId id, string name, string physicalName, DatabaseFileType type)
+                    : base(id, name, physicalName, type)
                 {
                 }
 
@@ -91,6 +91,14 @@ namespace Cella.Core.Tests
             Assert.Single(db.PrimaryFileGroup.DataFiles);
             Assert.Single(db.FileGroups);
             Assert.Single(db.LogFiles.DataFiles);
+        }
+
+        [Fact]
+        public void FileSavesAndLoadsItsData()
+        {
+            FileMill fm = new();
+            //FileGroup fg = new PrimaryFileGroup(null, fm);
+            //ManagedFile file = new()
         }
     }
 }

@@ -7,13 +7,13 @@ public class ManagedFile : DatabaseFile, IAsyncDisposable
 {
     private FileStream? fileStream;
 
-    public ManagedFile(DataSpace dataSpace, FileId id, string name, string physicalName, DatabaseFileType type)
-        : base(dataSpace, id, name, physicalName, type)
+    public ManagedFile(FileId id, string name, string physicalName, DatabaseFileType type)
+        : base(id, name, physicalName, type)
     {
     }
 
-    public ManagedFile(DataSpace dataSpace, FileId id, string name, string physicalName, Guid guid, DatabaseFileType type)
-        : base(dataSpace, id, name, physicalName, type, guid)
+    public ManagedFile(FileId id, string name, string physicalName, Guid guid, DatabaseFileType type)
+        : base(id, name, physicalName, type, guid)
     {
     }
 

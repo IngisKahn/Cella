@@ -66,18 +66,20 @@ public class Database
         this.Options = databaseOptions;
         this.Name = databaseOptions.Name;
         this.UserAccess = databaseOptions.UserAccess ?? DatabaseUserAccess.Multi;
-        this.PrimaryFileGroup = new(this, fileMill, databaseOptions.PrimaryFiles);
+        this.PrimaryFileGroup = databaseOptions.PrimaryFiles != null
+            ? new(fileMill, databaseOptions.PrimaryFiles)
+            : new(fileMill, this.Name);
 
         var fileGroups =
             (databaseOptions.FileGroups ?? Array.Empty<FileGroupOptions>()).Select((fgo, i) =>
-                new FileGroup(this, fileMill, fgo, i + 1));
+                new FileGroup(fileMill, fgo, i + 1));
 
 
         this.FileGroups = fileGroups.Prepend(this.PrimaryFileGroup).ToArray();
 
         this.DefaultFileGroup = this.FileGroups.FirstOrDefault(fileGroup => fileGroup.IsDefault) ?? this.FileGroups.First();
 
-        this.LogFiles = new(this, fileMill, new("Log",databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any() ? databaseOptions.LogFiles
+        this.LogFiles = new(fileMill, new("Log",databaseOptions.LogFiles != null && databaseOptions.LogFiles.Any() ? databaseOptions.LogFiles
             : new[]
             {
                 new Files.ManagedFileOptions(this.Name + " Log", this.Name + ".ldf")

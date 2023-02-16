@@ -6,19 +6,14 @@ public class FileGroup : BaseFileGroup
 {
     protected FileMill FileMill { get; }
     public List<DatabaseFile> DataFiles { get; } = new();
-    public Database Database { get; }
-    public FileGroup(Database database, FileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
+    public FileGroup(FileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;
-        this.Database = database;
         this.IsDefault = options.IsDefault;
-        this.DataFiles.AddRange(options.FileOptions.Select(fo => fileMill.Create(this, fo)));
+        this.DataFiles.AddRange(options.FileOptions.Select(fo => fileMill.Create(new(0), fo)));
     }
-    protected FileGroup(Database database, FileMill fileMill, string name, int id) : base(id, name, DataSpaceType.FileGroup)
-    {
-        this.FileMill = fileMill;
-        this.Database = database;
-    }
+    protected FileGroup(FileMill fileMill, string name, int id) : base(id, name, DataSpaceType.FileGroup) => this.FileMill = fileMill;
+
     public void GrowRequest(ManagedFile file)
     {
         if (this.AutoGrowAllFiles)
