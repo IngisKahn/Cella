@@ -2,9 +2,9 @@
 
 public class BufferPool
 {
-    private readonly List<Memory<byte>> bufferBlocks = new();
+    private readonly List<Memory<byte>> bufferBlocks = [];
     private readonly int initialSize;
-    private readonly HashSet<int> freeBuffers = new();
+    private readonly HashSet<int> freeBuffers = [];
     private int bufferCount;
 
     public int WorkingSetPages => this.bufferBlocks.Count * this.initialSize;
@@ -43,19 +43,10 @@ public class BufferPool
         this.freeBuffers.Add(blockIndex * this.initialSize + subIndex);
     }
 
-    public readonly struct Buffer : IDisposable
+    public readonly struct Buffer(BufferPool daddy, int index, Memory<byte> memory) : IDisposable
     {
-        private readonly BufferPool daddy;
-        private readonly int index;
-        public Memory<byte> Memory { get; }
+        public Memory<byte> Memory { get; } = memory;
 
-        public Buffer(BufferPool daddy, int index, Memory<byte> memory)
-        {
-            this.daddy = daddy;
-            this.index = index;
-            this.Memory = memory;
-        }
-
-        public void Dispose() => this.daddy.Free(this.index);
+        public void Dispose() => daddy.Free(index);
     }
 }

@@ -12,18 +12,22 @@ public abstract class DataType<T>
         var stringLength = Math.Min(chars.Length, maxLength);
         var byteCount = Encoding.UTF8.GetByteCount(chars, 0, stringLength);
 
-        (byte[], int) Convert()
-        {
-            var bytes = new byte[byteCount];
-            Encoding.UTF8.GetBytes(chars, 0, stringLength, bytes, 0);
-            return (bytes, stringLength);
-        }
-
         // simple case, it fits
         if (byteCount <= maxLength)
             return Convert();
 
         var searchLength = -(stringLength >> 1);
+        do
+        {
+            if (searchLength > 0)
+                Search(ref maxLength, ref byteCount);
+            else
+                Search(ref byteCount, ref maxLength);
+            searchLength = -searchLength;
+        } while (searchLength != 0);
+        
+        return Convert();
+
         void Search(ref int a, ref int b)
         {
             var lastStringLength = 0;
@@ -42,16 +46,13 @@ public abstract class DataType<T>
             stringLength = lastStringLength;
             byteCount = lastByteCount;
         }
-        do
+
+        (byte[], int) Convert()
         {
-            if (searchLength > 0)
-                Search(ref maxLength, ref byteCount);
-            else
-                Search(ref byteCount, ref maxLength);
-            searchLength = -searchLength;
-        } while (searchLength != 0);
-        
-        return Convert();
+            var bytes = new byte[byteCount];
+            Encoding.UTF8.GetBytes(chars, 0, stringLength, bytes, 0);
+            return (bytes, stringLength);
+        }
     }
 }
 

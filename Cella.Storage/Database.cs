@@ -10,7 +10,7 @@ using FileOptions = System.IO.FileOptions;
 public class Database
 {
     private readonly FileMill fileMill;
-    public List<DataObject> Objects { get; set; } = new();
+    public List<DataObject> Objects { get; set; } = [];
     // Indexes
     // Columns
     // IdentityColumns
@@ -71,7 +71,7 @@ public class Database
             : new(fileMill, this.Name);
 
         var fileGroups =
-            (databaseOptions.FileGroups ?? Array.Empty<FileGroupOptions>()).Select((fgo, i) =>
+            (databaseOptions.FileGroups ?? []).Select((fgo, i) =>
                 new FileGroup(fileMill, fgo, i + 1));
 
 

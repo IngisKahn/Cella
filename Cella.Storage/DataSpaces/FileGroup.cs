@@ -5,7 +5,7 @@ using Files;
 public class FileGroup : BaseFileGroup
 {
     protected FileMill FileMill { get; }
-    public List<DatabaseFile> DataFiles { get; } = new();
+    public List<DatabaseFile> DataFiles { get; } = [];
     public FileGroup(FileMill fileMill, FileGroupOptions options, int id) : base(id, options.Name, DataSpaceType.FileGroup)
     {
         this.FileMill = fileMill;

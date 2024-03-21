@@ -3,13 +3,13 @@
 using Core;
 using DataSpaces;
 
-public abstract class DatabaseFile
+public abstract class DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
 {
-    public FileId Id { get; }
-    public Guid Guid { get; }
-    public string Name { get; }
-    public string PhysicalName { get; }
-    public DatabaseFileType Type { get; }
+    public FileId Id { get; } = id;
+    public Guid Guid { get; } = guid;
+    public string Name { get; } = name;
+    public string PhysicalName { get; } = physicalName;
+    public DatabaseFileType Type { get; } = type;
     public decimal CreateLsn { get; set; }
     public decimal DropLsn { get; set; }
     public decimal ReadOnlyLsn { get; set; }
@@ -22,17 +22,10 @@ public abstract class DatabaseFile
     public bool IsSparse { get; init; }
     public bool IsNameReserved { get; set; }
 
-    public DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type)
+    protected DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type)
         : this(id, name, physicalName, type, Guid.NewGuid()) { }
-    public DatabaseFile(FileId id, string name, string physicalName, DatabaseFileType type, Guid guid)
-    {
-        //this.DataSpace = dataSpace;
-        this.Id = id;
-        this.Name = name;
-        this.PhysicalName = physicalName;
-        this.Guid = guid;
-        this.Type = type;
-    }
+
+    //this.DataSpace = dataSpace;
 
     public virtual void Validate()
     {

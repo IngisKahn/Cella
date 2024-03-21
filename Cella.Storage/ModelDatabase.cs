@@ -2,12 +2,9 @@
 
 using Files;
 
-public class ModelDatabase : Database
+public class ModelDatabase(FileMill fileMill) : Database(fileMill, new(ModelDatabase.ModelDbName))
 {
     public const string ModelDbName = "model";
-    public ModelDatabase(FileMill fileMill) : base(fileMill, new(ModelDatabase.ModelDbName))
-    {
-    }
 
     public async Task CreateAsync()
     {

@@ -17,7 +17,7 @@ public class StringDataType : DataType<string>
         var (bytes, _) = DataType<string>.ConvertString(this.MaxLength - 2, value);
 
         var byteCountField = (ushort)bytes.Length;
-        MemoryMarshal.Write(data, ref byteCountField);
+        MemoryMarshal.Write(data, in byteCountField);
         bytes.CopyTo(data[2..]);
         return byteCountField;
     }

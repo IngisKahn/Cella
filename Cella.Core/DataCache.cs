@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 public sealed class DataCache : IAsyncDisposable
 {
-    private readonly LinkedList<Slot> allocated = new();
+    private readonly LinkedList<Slot> allocated = [];
 
     private readonly BufferPool bufferPool;
     private readonly ConcurrentDictionary<FullPageId, Slot> cache = new();

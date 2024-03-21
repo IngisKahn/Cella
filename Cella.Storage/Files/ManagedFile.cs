@@ -58,5 +58,10 @@ public class ManagedFile : DatabaseFile, IAsyncDisposable
         this.fileStream.SetLength(size);
     }
 
-    public async ValueTask DisposeAsync() => await (this.fileStream ?? throw new CellaException($"File {this.PhysicalName} for {this.Name} is not open")).DisposeAsync();
+    public ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        return (this.fileStream ?? throw new CellaException($"File {this.PhysicalName} for {this.Name} is not open"))
+            .DisposeAsync();
+    }
 }

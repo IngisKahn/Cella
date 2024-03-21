@@ -2,13 +2,11 @@
 
 using System.Text;
 
-public class FixedStringDataType : FixedDataType<string>
+public class FixedStringDataType(int length) : FixedDataType<string>(length)
 {
-    public FixedStringDataType(int length) : base(length) { }
-
     public override string Read(ReadOnlySpan<byte> data) => Encoding.UTF8.GetString(data);
 
-    public override void Write(Span<byte> data, ref string value)
+    public override void Write(Span<byte> data, in string value)
     {
         var (bytes, _) = DataType<string>.ConvertString(this.MaxLength, value);
         

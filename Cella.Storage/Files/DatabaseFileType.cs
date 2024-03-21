@@ -5,5 +5,5 @@ public enum DatabaseFileType
     Pages,
     Log,
     FileStream,
-    Fixed
+    FixedList
 }
