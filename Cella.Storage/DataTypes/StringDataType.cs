@@ -22,5 +22,5 @@ public class StringDataType : DataType<string>
         return byteCountField;
     }
 
-    public override int MaxLength { get; }
+    public override int MaxLength => -1;
 }

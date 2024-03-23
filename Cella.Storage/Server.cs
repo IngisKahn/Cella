@@ -6,9 +6,8 @@ using Core;
 
 public class Server
 {
-    private readonly Dictionary<string, Database> databases = new();
+    private readonly Dictionary<string, Database> databases = [];
     private readonly DatabaseMill databaseMill;
-    private readonly string location;
 
     public ServerOptions Options { get; private init; } = null!;
     public Guid Guid { get; private init; } 
@@ -20,14 +19,13 @@ public class Server
     {
         this.databaseMill = databaseMill;
         this.Options = serverOptions;
-        this.location = serverOptions.Location;
         this.Guid = Guid.NewGuid();
     }
 
-    private Server(DatabaseMill databaseMill, string masterDbPath)
+    private Server(DatabaseMill databaseMill, string masterDbPath, int port = 1319)
     {
         this.databaseMill = databaseMill;
-        this.location = Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath));
+        this.Options = new(Path.GetFileNameWithoutExtension(masterDbPath), Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath)), port);
     }
 
     internal static async Task<Server> CreateAsync(DatabaseMill databaseMill, ServerOptions serverOptions)
