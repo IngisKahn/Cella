@@ -13,6 +13,6 @@ public class MasterDatabase : Database
     }
     public ServerOptions ServerOptions { get; set; }
     public Guid ServerGuid { get; } = Guid.NewGuid();
-    public IEnumerable<Database> Databases { get; } = new List<Database>();
+    public IEnumerable<Database> Databases { get; } = [];
 
 }

@@ -35,8 +35,8 @@ public record DatabaseOptions(string Name)
             FileGroups = this.FileGroups ?? defaults.FileGroups,
             LogFiles = this.LogFiles ?? defaults.LogFiles,
         };
-    public static DatabaseOptions Defaults(string name) =>
-        new(name)
+    public static DatabaseOptions Defaults(string? name = null) =>
+        new(name ?? string.Empty)
         {
             UserAccess = DatabaseUserAccess.Multi,
             IsAutoClose = false,

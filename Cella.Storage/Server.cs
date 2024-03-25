@@ -10,27 +10,28 @@ public class Server
     private readonly DatabaseMill databaseMill;
 
     public ServerOptions Options { get; private init; } = null!;
-    public Guid Guid { get; private init; } 
+    public Guid Guid { get; } 
 
     public required ModelDatabase Model { private get; init; }
     public required MasterDatabase Master { private get; init; }
 
-    private Server(DatabaseMill databaseMill, ServerOptions serverOptions)
+    private Server(DatabaseMill databaseMill, Guid id)
     {
         this.databaseMill = databaseMill;
-        this.Options = serverOptions;
-        this.Guid = Guid.NewGuid();
+        this.Guid = id;
     }
 
-    private Server(DatabaseMill databaseMill, string masterDbPath, int port = 1319)
-    {
-        this.databaseMill = databaseMill;
-        this.Options = new(Path.GetFileNameWithoutExtension(masterDbPath), Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath)), port);
-    }
+    private Server(DatabaseMill databaseMill, ServerOptions serverOptions) : this(databaseMill, Guid.NewGuid()) => this.Options = serverOptions;
+
+    private Server(DatabaseMill databaseMill, string masterDbPath, int port = 1319) : this(databaseMill, Guid.NewGuid()) => 
+        this.Options = 
+            new(Path.GetFileNameWithoutExtension(masterDbPath), 
+            Path.GetDirectoryName(masterDbPath) ?? throw new ArgumentException("Invalid Path", nameof(masterDbPath)), 
+            port);
 
     internal static async Task<Server> CreateAsync(DatabaseMill databaseMill, ServerOptions serverOptions)
     {
-        var model = await databaseMill.CreateModelAsync(serverOptions.Location, serverOptions.ModelDatabaseOptions);
+        var model = await databaseMill.CreateModelAsync(serverOptions.Location, serverOptions.ModelDatabaseOptions));
         Server server = new(databaseMill, serverOptions)
         {
             Model = model,

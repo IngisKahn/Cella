@@ -11,7 +11,12 @@ public class DatabaseMill
         this.fileMill = fileMill;
     }
     // requires role sysadmin || server access CONTROL or ALTER || permission CREATE DATABASE
-    public Task<ModelDatabase> CreateModelAsync(string location, DatabaseOptions databaseOptions) => throw new NotImplementedException();
+    public async Task<ModelDatabase> CreateModelAsync(string location, DatabaseOptions? databaseOptions)
+    {
+        var model = new ModelDatabase(this.fileMill, databaseOptions ?? DatabaseOptions.Defaults());
+        await model.CreateAsync();
+        return model;
+    }
     public Task<MasterDatabase> CreateMasterAsync(ModelDatabase model, string location, DatabaseOptions databaseOptions) => throw new NotImplementedException();
 
     public async Task<Database> Create(DatabaseOptions databaseOptions, ModelDatabase model)

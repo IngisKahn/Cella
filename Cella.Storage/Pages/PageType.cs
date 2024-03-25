@@ -4,13 +4,13 @@ public enum PageType : byte
 {
     Data = 1,
     IntermediateIndex,
-    MixedData,
-    MixedTree,
+    OverflowData,
+    LargeObject,
     // _
     WorkFile = 6,
     Sort, 
-    GlobalAllocationMap,
-    SharedGlobalAllocationMap,
+    ExtentAllocationMap,
+    SharedExtentAllocationMap,
     AllocationUnitMap,
     PageFreeSpace,
     // _

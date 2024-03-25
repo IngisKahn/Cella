@@ -1,5 +1,5 @@
 ﻿namespace Cella.Storage.Pages;
 
-public class FileAllocationMap : FlagPage
+public class ExtentAllocationMap : FlagPage
 {
 }
